@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/04/28 13:12:30 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/04/28 20:42:34 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,8 @@ int	print_error(char *str)
 void	*sleep_and_die(void *tab_arg)
 {
 	static pthread_t	new;
-	struct timeval		tv;
-	struct timeval		tmp;
-
+	struct timeval		tv[3];
+  int tmp;
 	if (!new)
 	{
 		if (pthread_create(&new, NULL, sleep_and_die, tab_arg))
@@ -51,14 +50,16 @@ void	*sleep_and_die(void *tab_arg)
 	}
 	write(1, "One fork for eating spaghetti!!\nShame on you, ", 46);
 	write(1, "I prefer dying than eating !!\n", 31);
+	gettimeofday(&tv[0], NULL);
 	while (((int *)tab_arg)[1] > 0)
 	{
-		gettimeofday(&tv, NULL);
+		gettimeofday(&tv[1], NULL);
 		usleep(30);
-		gettimeofday(&tmp, NULL);
-		((int *)tab_arg)[1] -= (int)(tmp.tv_usec - tv.tv_usec);
+		gettimeofday(&tv[2], NULL);
+  	((int *)tab_arg)[1] -= (int)((tv[2].tv_usec - tv[1].tv_usec));
 	}
-	printf("%ld %ld died\n", ((tmp.tv_usec - tv.tv_usec)), new);
+	gettimeofday(&tv[2], NULL);
+	printf("%ld %ld died\n", ((tv[2].tv_usec - tv[0].tv_usec) * 1000 + ((tv[2].tv_sec - tv[0].tv_sec) / 1000)), new);
 	return (NULL);
 }
 
@@ -76,6 +77,8 @@ int	main(int argc, char **argv)
 		th = sleep_and_die(tab_arg);
 		if (th)
 			pthread_join(*th, NULL);
+    // else
+      //print error
 	}
 	/*
 	if (tab_arg[1] < tab_arg[2] || tab_arg[1] < tab_arg[3])
