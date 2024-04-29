@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/04/28 13:12:30 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/04/28 13:53:56 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int	print_error(char *str)
 void	*sleep_and_die(void *tab_arg)
 {
 	static pthread_t	new;
+	struct timeval		main;
 	struct timeval		tv;
 	struct timeval		tmp;
 
@@ -51,14 +52,16 @@ void	*sleep_and_die(void *tab_arg)
 	}
 	write(1, "One fork for eating spaghetti!!\nShame on you, ", 46);
 	write(1, "I prefer dying than eating !!\n", 31);
-	while (((int *)tab_arg)[1] > 0)
+	gettimeofday(&main, NULL);
+	while (((int *)tab_arg)[1] >= 0)
 	{
 		gettimeofday(&tv, NULL);
-		usleep(30);
+		usleep(((unsigned)((int *)tab_arg)[1]) * 1000);
 		gettimeofday(&tmp, NULL);
-		((int *)tab_arg)[1] -= (int)(tmp.tv_usec - tv.tv_usec);
+		((int *)tab_arg)[1] -= ((int)(tmp.tv_usec - tv.tv_usec) * 1000);
 	}
-	printf("%ld %ld died\n", ((tmp.tv_usec - tv.tv_usec)), new);
+	gettimeofday(&tmp, NULL);
+	printf("%ld %ld died\n", ((tmp.tv_usec - main.tv_usec)), new);
 	return (NULL);
 }
 
