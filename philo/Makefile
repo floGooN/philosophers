@@ -6,7 +6,7 @@
 #    By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 09:47:22 by fberthou          #+#    #+#              #
-#    Updated: 2024/04/28 12:09:02 by fberthou         ###   ########.fr        #
+#    Updated: 2024/04/29 08:54:00 by fberthou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,7 @@ BUILD_PARS_PATH			= $(BUILD_PATH)/parsing
 # --- COMPILATION FLAGS --- #
 COMPFLAGS	=	-g #-Wall -Wextra -Werror
 
-SRC		=	$(MAIN_PATH)/main.c \
+SRC		=	$(MAIN_PATH)/main.c $(MAIN_PATH)/utils.c \
 			\
 			$(PARSING_PATH)/parsing.c $(PARSING_PATH)/parsing_utils.c 
 
