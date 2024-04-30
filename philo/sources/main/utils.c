@@ -3,13 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/04/29 09:31:22 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/04/30 20:04:59 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "struct.h"
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
@@ -44,4 +45,18 @@ void	*ft_calloc(size_t nmemb, size_t size)
 		return (NULL);
 	memset(new_mem_place, 0, total_memory_size);
 	return (new_mem_place);
+}
+
+void  free_lst(t_philo *head_lst)
+{
+  t_philo *tmp;
+
+  while (head_lst)
+  {
+    tmp = head_lst->next;
+    if (head_lst->fork_ptr)
+      free(head_lst->fork_ptr);
+    free(head_lst);
+    head_lst = tmp;
+  }
 }
