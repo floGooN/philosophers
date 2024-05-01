@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/04/30 20:04:59 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/01 19:23:25 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ void  free_lst(t_philo *head_lst)
     tmp = head_lst->next;
     if (head_lst->fork_ptr)
       free(head_lst->fork_ptr);
+    if (head_lst->args)
+      free(head_lst->args);
     free(head_lst);
     head_lst = tmp;
   }

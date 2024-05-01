@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/04/30 21:51:07 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/01 19:14:06 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,48 @@ t_philo	*socrate_maker(int *tab_args);
 	return (NULL);
 }*/
 
-void *routine(void *arg)
+void *eat_routine(void *arg)
 {
   t_philo         *lst;
-  pthread_mutex_t mutex;
 
-  pthread_mutex_init(&mutex, NULL);
-  pthread_mutex_lock(&mutex);
-  lst = arg;
-  while (lst->next)
-  {
-    lst = lst->next;
-  }
-  printf("thread nb %ld\n", lst->philo_id);
-  pthread_mutex_unlock(&mutex);
+  pthread_mutex_lock(&((t_philo *)arg)->shared_mutex[0]);
+  lst = (t_philo *) arg;
+  printf("thread nb %ld, index = %d from eat\n", lst->philo_id, lst->index);
+  pthread_mutex_unlock(&lst->shared_mutex[0]);
+  return (NULL);
+}
+
+void *sleep_routine(void *arg)
+{
+  struct timeval	tv[3];
+  t_philo         *lst;
+
+  lst = (t_philo *) arg;
+
+  gettimeofday(&tv[0], NULL);
+	while (lst->args[2] > 0)
+	{
+		gettimeofday(&tv[1], NULL);
+		usleep(10);
+		gettimeofday(&tv[2], NULL);
+  	lst->args[2] -= (int)((tv[2].tv_usec - tv[1].tv_usec));
+	}
+	gettimeofday(&tv[2], NULL);
+  pthread_mutex_lock(&((t_philo *)arg)->shared_mutex[0]);
+	printf("%ld %ld is sleeping -> index %d\n", ((tv[2].tv_usec - tv[0].tv_usec) * 1000 + \
+                            (tv[2].tv_sec - tv[0].tv_sec) / 1000), lst->philo_id, lst->index);
+  pthread_mutex_unlock(&lst->shared_mutex[0]);
+  return (NULL);
+}
+
+void *think_routine(void *arg)
+{
+  t_philo         *lst;
+
+  pthread_mutex_lock(&((t_philo *)arg)->shared_mutex[0]);
+  lst = (t_philo *) arg;
+  printf("thread nb %ld, index = %d from think\n", lst->philo_id, lst->index);
+  pthread_mutex_unlock(&lst->shared_mutex[0]);
   return (NULL);
 }
 
@@ -86,8 +114,16 @@ bool  launch_threads(t_philo *lst)
   head_lst = lst;
   while (lst)
   {
-    if (pthread_create(&(lst)->philo_id, NULL, routine, head_lst))
-      return (1);
+    if (lst->index % 2 == 0)
+    {
+      if (pthread_create(&(lst)->philo_id, NULL, sleep_routine, lst))
+        return (1);
+    }
+    else
+    {
+      if (pthread_create(&(lst)->philo_id, NULL, sleep_routine, lst))
+        return (1);
+    }
     lst = lst->next;
   }
   return (0);
@@ -105,25 +141,20 @@ int	main(int argc, char **argv)
   if (argc == 5)
 	{
     head_lst = socrate_maker(tab_arg);
+    t_philo *tmp = head_lst;
 		if (!head_lst)
         return (0);
-
     if (launch_threads(head_lst))
         return (free_lst(head_lst), 0);
+    while (tmp)
+    {
+      pthread_join(tmp->philo_id, NULL);
+      tmp = tmp->next;
+    }
     free_lst(head_lst);
-
-  /*  create all philosophers before launch all threads
-
-      // if (pthread_create(&lst->philo_id, NULL, start_routine, tab_args))
-      // 	return (NULL);
-
-  */
-		// if (join_all(head_lst)) // error -> all is free ?
-		// 	return (0); // need check memory before exit ?
 	}
-
-
-
+	return (0);
+}
 	// if (tab_arg[0] == 1)
 	// {
 	// 	th = (pthread_t *) sleep_and_die(tab_arg);
@@ -142,5 +173,3 @@ int	main(int argc, char **argv)
 	else
 		// eat %d time and die
 	*/
-	return (0);
-}
