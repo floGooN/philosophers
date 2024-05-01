@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/01 19:14:06 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/01 21:41:30 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,29 @@ t_philo	*socrate_maker(int *tab_args);
 	return (NULL);
 }*/
 
+void  *print_message(pthread_mutex_t *mutex, long int time, \
+                                long int philo_num, int state)
+{
+  pthread_mutex_lock(mutex);
+  if (state == 0)
+    printf("%ld %ld has taken a fork\n", time, philo_num);
+  else if (state == 1)
+    printf("%ld %ld is eating\n", time, philo_num);
+  else if (state == 2)
+    printf("%ld %ld is sleeping\n", time, philo_num);
+  else if (state == 3)
+    printf("%ld %ld is thinkink\n", time, philo_num);
+  else
+    printf("%ld %ld died\n", time, philo_num);
+  if (state <= 3)
+  {
+    pthread_mutex_unlock(mutex);
+    return (NULL);
+  }
+  else
+    return (mutex);
+}
+
 void *eat_routine(void *arg)
 {
   t_philo         *lst;
@@ -75,25 +98,26 @@ void *eat_routine(void *arg)
 
 void *sleep_routine(void *arg)
 {
-  struct timeval	tv[3];
-  t_philo         *lst;
+  int     tmp;
+  t_philo *lst;
 
   lst = (t_philo *) arg;
-
-  gettimeofday(&tv[0], NULL);
+  gettimeofday(&lst->tv[0], NULL);
 	while (lst->args[2] > 0)
 	{
-		gettimeofday(&tv[1], NULL);
+		gettimeofday(&lst->tv[1], NULL);
 		usleep(10);
-		gettimeofday(&tv[2], NULL);
-  	lst->args[2] -= (int)((tv[2].tv_usec - tv[1].tv_usec));
+		gettimeofday(&lst->tv[2], NULL);
+  	lst->args[2] -= (int)((lst->tv[2].tv_usec - lst->tv[1].tv_usec));
 	}
-	gettimeofday(&tv[2], NULL);
-  pthread_mutex_lock(&((t_philo *)arg)->shared_mutex[0]);
-	printf("%ld %ld is sleeping -> index %d\n", ((tv[2].tv_usec - tv[0].tv_usec) * 1000 + \
-                            (tv[2].tv_sec - tv[0].tv_sec) / 1000), lst->philo_id, lst->index);
-  pthread_mutex_unlock(&lst->shared_mutex[0]);
-  return (NULL);
+	gettimeofday(&lst->tv[1], NULL);
+  tmp = ((lst->tv[1].tv_usec - lst->tv[0].tv_usec) * 1000 + \
+              (lst->tv[1].tv_sec - lst->tv[0].tv_sec) / 1000);
+  lst->args[0] -= tmp;
+  if (lst->args[0] <= 0)
+    return (print_message(&lst->shared_mutex[0], tmp, lst->philo_id, 4));
+  else
+    return (print_message(&lst->shared_mutex[0], tmp, lst->philo_id, 2));
 }
 
 void *think_routine(void *arg)
@@ -128,6 +152,11 @@ bool  launch_threads(t_philo *lst)
   }
   return (0);
 }
+
+/*
+  * philo struct need a timeval tab (like in sleep routine)
+  *
+*/
 
 int	main(int argc, char **argv)
 {
