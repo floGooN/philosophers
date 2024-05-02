@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/02 12:44:39 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/02 18:46:15 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,17 +63,17 @@ t_philo	*socrate_maker(int *tab_args);
 }*/
 
 void  *print_message(pthread_mutex_t *mutex, long int time, \
-                                long int philo_num, int state)
+                                size_t philo_num, int state)
 {
   pthread_mutex_lock(mutex);
   if (state == 0)
-    printf("%ld %ld has taken a fork\n", time, philo_num);
+    printf("%ld %zu has taken a fork\n", time, philo_num);
   else if (state == 1)
-    printf("%ld %ld is eating\n", time, philo_num);
+    printf("%ld %zu is eating\n", time, philo_num);
   else if (state == 2)
-    printf("%ld %ld is sleeping\n", time, philo_num);
+    printf("%ld %zu is sleeping\n", time, philo_num);
   else if (state == 3)
-    printf("%ld %ld is thinkink\n", time, philo_num);
+    printf("%ld %zu is thinkink\n", time, philo_num);
   else
     printf("%ld %ld died\n", time, philo_num);
   if (state <= 3)
@@ -85,113 +85,131 @@ void  *print_message(pthread_mutex_t *mutex, long int time, \
     return (mutex);
 }
 
-void *eat_routine(void *arg)
+void *eat_routine(t_philo *lst)
 {
-  int     tmp;
-  t_philo *lst;
+  int             tmp;
+  struct timeval  time_val[2];
 
-  lst = (t_philo *) arg;
-  while (*(lst->start_ptr))
-    continue ;
-  // gettimeofday(&lst->tv[0], NULL);
-	while (lst->args[2] > 0 && lst->args[1] > 0)
+	while (lst->time_to_eat > 0 && lst->time_to_die > 0)
 	{
-		gettimeofday(&lst->tv[0], NULL);
+		gettimeofday(&time_val[0], NULL);
 		usleep(10);
-		gettimeofday(&lst->tv[1], NULL);
-  	lst->args[2] -= (int) ((lst->tv[1].tv_usec - lst->tv[0].tv_usec) + \
-              (lst->tv[1].tv_sec - lst->tv[0].tv_sec));
-  	lst->args[1] -= (int) ((lst->tv[1].tv_usec - lst->tv[0].tv_usec) + \
-              (lst->tv[1].tv_sec - lst->tv[0].tv_sec));
+		gettimeofday(&time_val[1], NULL);
+  	lst->time_to_eat = lst->time_to_eat - (int) ((time_val[1].tv_usec - time_val[0].tv_usec) + \
+              (time_val[1].tv_sec - time_val[0].tv_sec));
+  	lst->time_to_die = lst->time_to_die - (int) ((time_val[1].tv_usec - time_val[0].tv_usec) + \
+              (time_val[1].tv_sec - time_val[0].tv_sec));
 	}
-	// gettimeofday(&lst->tv[1], NULL);
-  // tmp = (int) (((lst->tv[1].tv_usec - lst->tv[0].tv_usec) + \
-  //             (lst->tv[1].tv_sec - lst->tv[0].tv_sec)));
-  // lst->args[1] -= tmp;
-  if (lst->args[1] <= 0)
-    return (print_message(&lst->shared_mutex[0], lst->args[1], lst->philo_id, 4));
+  if (lst->time_to_die <= 0)
+    return (print_message(&lst->shared_mutex[0], lst->time_to_die, lst->index, 4));
   else
-    return (print_message(&lst->shared_mutex[0], lst->args[1], lst->philo_id, 1));
+    return (print_message(&lst->shared_mutex[0], lst->time_to_die, lst->index, 1));
 }
 
-void *sleep_routine(void *arg)
+void  ft_usleep(int param)
 {
-  int     tmp;
-  t_philo *lst;
+  int i = 1;
 
-  lst = (t_philo *) arg;
-  if (lst->index == 1)
-    *(lst->start_ptr) = 0;
-  while (*(lst->start_ptr))
-    continue ;
-  // gettimeofday(&lst->tv[0], NULL);
-	while (lst->args[3] > 0)
+  while (param > (5 * i))
+  {
+    usleep(5);
+    i++;
+  }
+}
+
+void *sleep_routine(t_philo *lst)
+{
+  int             tmp;
+  struct timeval  time_val[2];
+
+	while (lst->time_to_sleep > 0 && lst->time_to_die > 0)
 	{
-		gettimeofday(&lst->tv[0], NULL);
-		usleep(10);
-		gettimeofday(&lst->tv[1], NULL);
-  	lst->args[3] -= (int) ((lst->tv[1].tv_usec - lst->tv[0].tv_usec) + \
-              (lst->tv[1].tv_sec - lst->tv[0].tv_sec));
-  	lst->args[1] -= (int) ((lst->tv[1].tv_usec - lst->tv[0].tv_usec) + \
-              (lst->tv[1].tv_sec - lst->tv[0].tv_sec));
+		gettimeofday(&time_val[0], NULL);
+		ft_usleep(10);
+		gettimeofday(&time_val[1], NULL);
+  	lst->time_to_sleep = lst->time_to_sleep - (int) ((time_val[1].tv_usec - time_val[0].tv_usec) + \
+              (time_val[1].tv_sec - time_val[0].tv_sec));
+  	lst->time_to_die = lst->time_to_die - (int) ((time_val[1].tv_usec - time_val[0].tv_usec) + \
+              (time_val[1].tv_sec - time_val[0].tv_sec));
 	}
-	// gettimeofday(&lst->tv[1], NULL);
-  // tmp = (((lst->tv[1].tv_usec - lst->tv[0].tv_usec) + \
-  //             (lst->tv[1].tv_sec - lst->tv[0].tv_sec)));
-  // lst->args[1] -= tmp;
-  if (lst->args[1] <= 0)
-    return (print_message(&lst->shared_mutex[0], lst->args[1], lst->philo_id, 4));
+  if (lst->time_to_die <= 0)
+    return (print_message(&lst->shared_mutex[0], lst->time_to_die, lst->index, 4));
   else
-    return (print_message(&lst->shared_mutex[0], lst->args[1], lst->philo_id, 2));
+    return (print_message(&lst->shared_mutex[0], lst->time_to_die, lst->index, 2));
 }
 
-void *think_routine(void *arg)
-{
-  t_philo         *lst;
+// void *think_routine(void *arg)
+// {
+//   t_philo         *lst;
+//   lst = (t_philo *) arg;
+//   pthread_mutex_lock(&((t_philo *)arg)->shared_mutex[0]);
+//   printf("thread nb %ld, index = %d from think\n", lst->index, lst->index);
+//   pthread_mutex_unlock(&lst->shared_mutex[0]);
+//   return (NULL);
+// }
 
-  lst = (t_philo *) arg;
-  while (*lst->start_ptr)
-    ;
-  pthread_mutex_lock(&((t_philo *)arg)->shared_mutex[0]);
-  printf("thread nb %ld, index = %d from think\n", lst->philo_id, lst->index);
-  pthread_mutex_unlock(&lst->shared_mutex[0]);
-  return (NULL);
-}
-
-void  *launcher(void *arg)
+void  *routine_b(void *arg)
 {
   t_philo *curr_philo;
 
   curr_philo = (t_philo *) arg;
-  if (curr_philo->index % 2 == 0)
-    sleep_routine(curr_philo);
+  while (!*(curr_philo->ready))
+    continue ;
+  //usleep(50);
+  while (curr_philo->time_to_die)
+  {
+    if (curr_philo->time_to_die)
+      eat_routine(curr_philo);
+    if (curr_philo->time_to_die)
+      sleep_routine(curr_philo);
+  }
+  return (NULL);
+}
+
+void  *routine_a(void *arg)
+{
+  t_philo *curr_philo;
+
+  curr_philo = (t_philo *) arg;
+  if (curr_philo->index == 1)
+    *(curr_philo->ready) = 1;
   else
-    eat_routine(curr_philo);
+  {
+    while (!*(curr_philo->ready))
+      continue ;
+  }
+  while (curr_philo->time_to_die)
+  {
+    if (curr_philo->time_to_die)
+      sleep_routine(curr_philo);
+    if (curr_philo->time_to_die)
+      eat_routine(curr_philo);
+  }
+  return (NULL);
 }
 
 bool  launch_threads(t_philo *lst)
 {
-  t_philo *head_lst;
-
-  head_lst = lst;
   while (lst)
   {
-    if (pthread_create(&(lst)->philo_id, NULL, launcher, lst))
-      return (1);
+    if (lst->index % 2)
+    {
+      if (pthread_create(&(lst)->philo_id, NULL, routine_a, lst))
+        return (1);
+    }
+    else
+      if (pthread_create(&(lst)->philo_id, NULL, routine_b, lst))
+        return (1);
     lst = lst->next;
   }
   return (0);
 }
 
-/*
-  * philo struct need a timeval tab (like in sleep routine)
-  *
-*/
-
 int	main(int argc, char **argv)
 {
-	int			  tab_arg[5];
-	t_philo		*head_lst;
+	int		  tab_arg[5];
+	t_philo *head_lst;
+  t_philo *tmp;
 
 	if (argc != 5 && argc != 6)
 		return (printf("Nb of arguments is invalid\n"), 0);
@@ -200,20 +218,22 @@ int	main(int argc, char **argv)
   if (argc == 5)
 	{
     head_lst = socrate_maker(tab_arg);
-    t_philo *tmp = head_lst->next;
 		if (!head_lst)
         return (0);
+
+
     if (launch_threads(head_lst->next))
         return (free_lst(head_lst), 0);
-    sleep_routine(head_lst);
+    routine_a(head_lst);
+    tmp = head_lst->next;
     while (tmp)
     {
       pthread_join(tmp->philo_id, NULL);
       tmp = tmp->next;
     }
     free_lst(head_lst);
+	  return (0);
 	}
-	return (0);
 }
 
 	/*

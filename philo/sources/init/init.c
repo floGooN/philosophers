@@ -1,19 +1,54 @@
-/*
-    HEADER 42
-    HEADER 42
-    HEADER 42
-    HEADER 42
-    HEADER 42
-    HEADER 42
-    HEADER 42
-    HEADER 42
-    HEADER 42
-*/
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
+/*   Updated: 2024/05/02 18:38:12 by fberthou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "struct.h"
 #include "init.h"
 
-# include <stdio.h>
-# include <string.h>
+#include <stdio.h>
+#include <string.h>
+
+void  ft_memcpy(void *dst, const void *src, size_t size)
+{
+  size_t  i;
+
+  i = 0;
+  while (i < size)
+  {
+    ((char *)dst)[i] = ((char *)src)[i];
+    i++;
+  }
+}
+
+static void init_var(t_philo *curr_philo, int *tab_args)
+{
+  static size_t i = 1;
+
+  curr_philo->time_to_die = tab_args[1];
+  curr_philo->time_to_eat = tab_args[2];
+  curr_philo->time_to_sleep = tab_args[3];
+  curr_philo->nb_lunch = tab_args[4];
+  curr_philo->index = i;
+  i++;
+}
+
+static void init_mutex(t_philo *curr_philo, bool is_head)
+{
+  if (is_head)
+    pthread_mutex_init(&curr_philo->shared_mutex[0], NULL);
+  else
+    curr_philo->shared_mutex[0] = curr_philo->head_lst->shared_mutex[0];
+  pthread_mutex_init(&curr_philo->fork_ptr->fork_mutex[0], NULL);
+  pthread_mutex_init(&curr_philo->fork_ptr->fork_mutex[1], NULL);
+}
 
 static bool init_head_lst(t_philo **head, int *tab_args)
 {
@@ -24,19 +59,12 @@ static bool init_head_lst(t_philo **head, int *tab_args)
   if (!(*head)->fork_ptr)
     return (free_lst(*head), print_error(LST_ERROR), 1);
   (*head)->args = ft_calloc(sizeof(int *), 5);
-  if (!(*head)->args)
+  (*head)->ready = ft_calloc(sizeof(bool), 1);
+  if (!(*head)->args || !(*head)->ready)
     return (free_lst(*head), print_error(LST_ERROR), 1);
+  init_var(*head, tab_args);
   memcpy((*head)->args, tab_args, (5 * sizeof(int *)));
-  (*head)->start_ptr = ft_calloc(1, sizeof(bool));
-  if (!(*head)->start_ptr)
-    return (free_lst(*head), print_error(LST_ERROR), 1);
-
-	pthread_mutex_init(&(*head)->fork_ptr->fork_mutex, NULL);
-	pthread_mutex_init(&(*head)->shared_mutex[0], NULL); // mutex printf
-	pthread_mutex_init(&(*head)->shared_mutex[1], NULL); // mutex unused
-
-  (*head)->index = 1;
-  *((*head)->start_ptr) = 1;
+  init_mutex(*head, 1);
   (*head)->head_lst = *head;
   return (0);
 }
@@ -45,15 +73,11 @@ t_philo	*socrate_maker(int *tab_args)
 {
 	t_philo	*lst;
 	t_philo	*head;
-	int 		nb_philo;
-
-  int i = 2;
 
   if (init_head_lst(&head, tab_args))
     return (NULL);
 	lst = head;
-	nb_philo = (tab_args[0] - 1);
-	while (nb_philo-- > 0)
+	while (--(tab_args[0]) > 0)
 	{
 		lst->next = ft_calloc(1, sizeof(t_philo));
 		if (!lst->next)
@@ -65,13 +89,11 @@ t_philo	*socrate_maker(int *tab_args)
     lst->args = ft_calloc(sizeof(int *), 5);
     if (!lst->args)
       return (free_lst(head), print_error(LST_ERROR), NULL);
+    init_var(lst, tab_args);
     memcpy(lst->args, tab_args, (5 * sizeof(int *)));
-    pthread_mutex_init(&lst->fork_ptr->fork_mutex, NULL);
-    lst->start_ptr = head->start_ptr;
-    lst->shared_mutex[0] = head->shared_mutex[0];
-    lst->shared_mutex[1] = head->shared_mutex[1];
     lst->head_lst = head;
-    lst->index = i++;
+    init_mutex(lst, 0);
+    lst->ready = head->ready;
   }
 	return (head);
 }
