@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/02 18:46:15 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/02 22:29:37 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,27 +85,6 @@ void  *print_message(pthread_mutex_t *mutex, long int time, \
     return (mutex);
 }
 
-void *eat_routine(t_philo *lst)
-{
-  int             tmp;
-  struct timeval  time_val[2];
-
-	while (lst->time_to_eat > 0 && lst->time_to_die > 0)
-	{
-		gettimeofday(&time_val[0], NULL);
-		usleep(10);
-		gettimeofday(&time_val[1], NULL);
-  	lst->time_to_eat = lst->time_to_eat - (int) ((time_val[1].tv_usec - time_val[0].tv_usec) + \
-              (time_val[1].tv_sec - time_val[0].tv_sec));
-  	lst->time_to_die = lst->time_to_die - (int) ((time_val[1].tv_usec - time_val[0].tv_usec) + \
-              (time_val[1].tv_sec - time_val[0].tv_sec));
-	}
-  if (lst->time_to_die <= 0)
-    return (print_message(&lst->shared_mutex[0], lst->time_to_die, lst->index, 4));
-  else
-    return (print_message(&lst->shared_mutex[0], lst->time_to_die, lst->index, 1));
-}
-
 void  ft_usleep(int param)
 {
   int i = 1;
@@ -117,6 +96,39 @@ void  ft_usleep(int param)
   }
 }
 
+void  maj_time(struct timeval  *time_val, int *buffer, int *die)
+{
+  int tmp;
+
+  tmp = (int) ((time_val[1].tv_usec - time_val[0].tv_usec) + \
+              (time_val[1].tv_sec - time_val[0].tv_sec));
+  *die -= tmp;
+  *buffer -= tmp;
+}
+
+void *eat_routine(t_philo *lst)
+{
+  int             tmp;
+  struct timeval  time_val[2];
+
+  lst->time_to_die = lst->args[1];
+	while (lst->time_to_eat > 0 && lst->time_to_die > 0)
+	{
+		gettimeofday(&time_val[0], NULL);
+		ft_usleep(10);
+		gettimeofday(&time_val[1], NULL);
+    maj_time(time_val, &lst->time_to_eat, &lst->time_to_die);
+	}
+  pthread_mutex_lock(lst->print_mutex);
+  printf("time to die = %d\n", lst->time_to_die);
+  pthread_mutex_unlock(lst->print_mutex);
+  if (lst->time_to_die <= 0)
+    return (print_message(lst->print_mutex, lst->time_to_die, lst->index, 4));
+  else
+    return (print_message(lst->print_mutex, lst->time_to_die, lst->index, 1));
+}
+
+
 void *sleep_routine(t_philo *lst)
 {
   int             tmp;
@@ -127,15 +139,15 @@ void *sleep_routine(t_philo *lst)
 		gettimeofday(&time_val[0], NULL);
 		ft_usleep(10);
 		gettimeofday(&time_val[1], NULL);
-  	lst->time_to_sleep = lst->time_to_sleep - (int) ((time_val[1].tv_usec - time_val[0].tv_usec) + \
-              (time_val[1].tv_sec - time_val[0].tv_sec));
-  	lst->time_to_die = lst->time_to_die - (int) ((time_val[1].tv_usec - time_val[0].tv_usec) + \
-              (time_val[1].tv_sec - time_val[0].tv_sec));
+    maj_time(time_val, &lst->time_to_sleep, &lst->time_to_die);
 	}
+  pthread_mutex_lock(lst->print_mutex);
+  printf("time to die = %d\n", lst->time_to_die);
+  pthread_mutex_unlock(lst->print_mutex);
   if (lst->time_to_die <= 0)
-    return (print_message(&lst->shared_mutex[0], lst->time_to_die, lst->index, 4));
+    return (print_message(lst->print_mutex, lst->time_to_die, lst->index, 4));
   else
-    return (print_message(&lst->shared_mutex[0], lst->time_to_die, lst->index, 2));
+    return (print_message(lst->print_mutex, lst->time_to_die, lst->index, 2));
 }
 
 // void *think_routine(void *arg)
@@ -153,16 +165,19 @@ void  *routine_b(void *arg)
   t_philo *curr_philo;
 
   curr_philo = (t_philo *) arg;
-  while (!*(curr_philo->ready))
-    continue ;
-  //usleep(50);
+  gettimeofday(&curr_philo->philo_tv, NULL);
   while (curr_philo->time_to_die)
   {
-    if (curr_philo->time_to_die)
+    if (curr_philo->time_to_die > 0)
       eat_routine(curr_philo);
-    if (curr_philo->time_to_die)
+    if (curr_philo->time_to_die > 0)
       sleep_routine(curr_philo);
   }
+  pthread_mutex_lock(curr_philo->print_mutex);
+  printf("ICI%d\n", curr_philo->index);
+  pause();
+  pthread_mutex_lock(curr_philo->print_mutex);
+
   return (NULL);
 }
 
@@ -171,13 +186,7 @@ void  *routine_a(void *arg)
   t_philo *curr_philo;
 
   curr_philo = (t_philo *) arg;
-  if (curr_philo->index == 1)
-    *(curr_philo->ready) = 1;
-  else
-  {
-    while (!*(curr_philo->ready))
-      continue ;
-  }
+  gettimeofday(&curr_philo->philo_tv, NULL);
   while (curr_philo->time_to_die)
   {
     if (curr_philo->time_to_die)
@@ -185,6 +194,10 @@ void  *routine_a(void *arg)
     if (curr_philo->time_to_die)
       eat_routine(curr_philo);
   }
+  pthread_mutex_lock(curr_philo->print_mutex);
+  printf("ICI%d\n", curr_philo->index);
+  pause();
+  pthread_mutex_lock(curr_philo->print_mutex);
   return (NULL);
 }
 
@@ -198,8 +211,10 @@ bool  launch_threads(t_philo *lst)
         return (1);
     }
     else
+    {
       if (pthread_create(&(lst)->philo_id, NULL, routine_b, lst))
         return (1);
+    }
     lst = lst->next;
   }
   return (0);
@@ -221,10 +236,9 @@ int	main(int argc, char **argv)
 		if (!head_lst)
         return (0);
 
-
-    if (launch_threads(head_lst->next))
+    if (launch_threads(head_lst))
         return (free_lst(head_lst), 0);
-    routine_a(head_lst);
+
     tmp = head_lst->next;
     while (tmp)
     {

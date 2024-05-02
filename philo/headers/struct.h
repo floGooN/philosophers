@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/02 18:45:46 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/02 22:28:06 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,19 @@ typedef struct s_philo
 {
 	pthread_t		    philo_id;
 
-	int				      *args;
   int             time_to_die;
   int             time_to_eat;
   int             time_to_sleep;
   int             nb_lunch;
   size_t          index;
-  bool            *ready;
-  pthread_mutex_t shared_mutex[1];
+  struct timeval  philo_tv;
 
-
+  // following ptr -> malloc in init
+  pthread_mutex_t *print_mutex;
   struct s_fork   *fork_ptr;
+	int				      *args;
+  bool            *ready;
+
 	struct s_philo	*head_lst;
 	struct s_philo	*next;
 }	t_philo ;
