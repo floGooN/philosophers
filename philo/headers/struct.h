@@ -31,6 +31,7 @@ typedef struct s_philo
   pthread_mutex_t shared_mutex[2];
   struct s_fork   *fork_ptr;
 	struct s_philo	*next;
+  bool            *start_ptr;
   struct timeval	tv[3];
 	struct s_philo	*head_lst;
   int             index;

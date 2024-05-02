@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/01 19:23:25 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/02 11:50:02 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,9 @@ void	*ft_calloc(size_t nmemb, size_t size)
 void  free_lst(t_philo *head_lst)
 {
   t_philo *tmp;
+  bool     state;
 
+  state = 0;
   while (head_lst)
   {
     tmp = head_lst->next;
@@ -58,6 +60,11 @@ void  free_lst(t_philo *head_lst)
       free(head_lst->fork_ptr);
     if (head_lst->args)
       free(head_lst->args);
+    if (head_lst->start_ptr && !state)
+    {
+      free(head_lst->start_ptr);
+      state = 1;
+    }
     free(head_lst);
     head_lst = tmp;
   }
