@@ -6,7 +6,7 @@
 #    By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 09:47:22 by fberthou          #+#    #+#              #
-#    Updated: 2024/05/02 15:09:39 by fberthou         ###   ########.fr        #
+#    Updated: 2024/05/03 14:21:26 by fberthou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,14 +23,16 @@ NAME		= philo
 HDR_PATH				= headers
 SRC_PATH				= sources
 MAIN_PATH				= $(SRC_PATH)/main
-PARSING_PATH		= $(SRC_PATH)/parsing
+PARSING_PATH			= $(SRC_PATH)/parsing
 INIT_PATH				= $(SRC_PATH)/init
+SIMULATION_PATH			= $(SRC_PATH)/simulation
 
 #TEMPORARY FILES#
 BUILD_PATH				= .build
 BUILD_MAIN_PATH			= $(BUILD_PATH)/main
 BUILD_PARS_PATH			= $(BUILD_PATH)/parsing
 BUILD_INIT_PATH			= $(BUILD_PATH)/init
+BUILD_SIMULATION_PATH	= $(BUILD_PATH)/simulation
 
 # --- COMPILATION FLAGS --- #
 COMPFLAGS	=	-g #-Wall -Wextra -Werror
@@ -39,7 +41,9 @@ SRC		=	$(MAIN_PATH)/main.c $(MAIN_PATH)/utils.c \
 			\
 			$(PARSING_PATH)/parsing.c $(PARSING_PATH)/parsing_utils.c \
 			\
-			$(INIT_PATH)/init.c
+			$(INIT_PATH)/init.c \
+			\
+			$(SIMULATION_PATH)/philo.c $(SIMULATION_PATH)/utils.c
 
 ### ---- TEMPORARY FILES ---- ###
 OBJ	= $(SRC:$(SRC_PATH)/%.c=$(BUILD_PATH)/%.o)
@@ -55,7 +59,7 @@ $(NAME)	: $(OBJ)
 
 #######     OBJECTS    #######
 $(BUILD_PATH)/%.o : $(SRC_PATH)/%.c
-	@mkdir -p $(BUILD_PATH) $(BUILD_PARS_PATH) $(BUILD_MAIN_PATH) $(BUILD_INIT_PATH)
+	@mkdir -p $(BUILD_PATH) $(BUILD_PARS_PATH) $(BUILD_MAIN_PATH) $(BUILD_INIT_PATH) $(BUILD_SIMULATION_PATH)
 	$(CC) $(COMPFLAGS) -I$(HDR_PATH) -c $< -o $@
 
 ### --- CLEAN MANAGEMENT --- ###

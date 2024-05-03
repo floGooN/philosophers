@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/02 22:27:32 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/03 11:07:29 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,16 +53,22 @@ void  free_lst(t_philo *head_lst)
   bool     state;
 
   state = 0;
+  sleep(1);
   while (head_lst)
   {
     tmp = head_lst->next;
     if (head_lst->fork_ptr)
       free(head_lst->fork_ptr);
-    if (head_lst->args)
-      free(head_lst->args);
-	  if (head_lst->index == 1)
-      free(head_lst->print_mutex);
+	if (head_lst->args)
+	{
+		free(head_lst->args);
+		head_lst->args = NULL;
+	}
+	if (head_lst->index == 1)
+	{
+		free(head_lst->print_mutex);
 		free(head_lst->ready);
+	}
     free(head_lst);
     head_lst = tmp;
   }

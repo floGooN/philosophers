@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/02 22:28:06 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/03 13:50:54 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef struct s_philo
   int             time_to_die;
   int             time_to_eat;
   int             time_to_sleep;
-  int             nb_lunch;
+  int             nb_meal;
   size_t          index;
   struct timeval  philo_tv;
 

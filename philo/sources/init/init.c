@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/02 22:30:44 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/03 11:09:24 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static void init_var(t_philo *curr_philo)
   curr_philo->time_to_die = curr_philo->args[1];
   curr_philo->time_to_eat = curr_philo->args[2];
   curr_philo->time_to_sleep = curr_philo->args[3];
-  curr_philo->nb_lunch = curr_philo->args[4];
+  curr_philo->nb_meal = curr_philo->args[4];
   curr_philo->index = i;
   i++;
 }
