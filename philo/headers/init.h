@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:59 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/02 18:18:02 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/03 21:26:31 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # define LST_ERROR   "Error -> init list\n"
 
 void	*ft_calloc(size_t nmemb, size_t size);
-void    free_lst(t_philo *head_lst);
+void  free_philo(t_philo *philo_tab, size_t tab_size);
 int		print_error(char *str);
 
 #endif

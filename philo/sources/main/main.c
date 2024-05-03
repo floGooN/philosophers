@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/03 14:31:52 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/03 21:08:38 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ int		parsing(int argc, char **argv, int *tab_arg);
 // main/utils.c
 int		print_error(char *str);
 void	*ft_calloc(size_t nmemb, size_t size);
-void  free_lst(t_philo *head_lst);
+void  free_philo(t_philo *philo_tab, size_t tab_size);
 
 // init/init.c
-t_philo	*socrate_maker(int *tab_args);
+t_philo	*socrate_maker(int *tab_args, bool *ready_ptr);
 
 // main/philo.c
 void  *routine_a(void *arg);
@@ -57,10 +57,13 @@ bool  launch_philo(t_philo *lst)
   return (0);
 }
 
+
+
 int	main(int argc, char **argv)
 {
   int		  tab_arg[5];
-  t_philo *head_lst;
+  t_philo *philo_tab;
+  bool    ready;
 
   if (argc != 5 && argc != 6)
     return (printf("Nb of arguments is invalid\n"), 0);
@@ -68,14 +71,14 @@ int	main(int argc, char **argv)
     return (0);
   if (argc == 5)
   {
-    head_lst = socrate_maker(tab_arg);
-    if (!head_lst)
+    philo_tab = socrate_maker(tab_arg, &ready);
+    if (!philo_tab)
         return (0);
-    if (launch_philo(head_lst))
-        return (free_lst(head_lst), 0);
+    if (launch_philo(philo_tab))
+        return (free_philo(philo_tab), 0);
 
     sleep(1);
-    free_lst(head_lst);
+    free_philo(philo_tab);
   }
   return (0);
 }
