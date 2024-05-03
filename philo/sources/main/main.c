@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/03 21:08:38 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/03 23:02:56 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,10 @@ int	main(int argc, char **argv)
     if (!philo_tab)
         return (0);
     if (launch_philo(philo_tab))
-        return (free_philo(philo_tab), 0);
+        return (free_philo(philo_tab, tab_arg[0]), 0);
 
     sleep(1);
-    free_philo(philo_tab);
+    free_philo(philo_tab, tab_arg[0]);
   }
   return (0);
 }
