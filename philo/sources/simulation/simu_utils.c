@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   simu_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/04 13:15:55 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/04 19:30:23 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,13 @@ bool  print_message(t_philo *philo, int state)
   gettimeofday(&tv, NULL);
   curr_time = ((tv.tv_usec - philo->philo_tv.tv_usec) + (tv.tv_sec - philo->philo_tv.tv_sec));
   pthread_mutex_lock(philo->print_mutex);
+  pthread_mutex_lock(philo->retval_mutex);
+  if (philo->is_dead)
+  {
+    pthread_mutex_unlock(philo->print_mutex);
+    pthread_mutex_unlock(philo->retval_mutex);
+    return (1);
+  }
   if (state == 0)
     printf("%ld %d has taken a fork\n", curr_time, philo->index);
   else if (state == 1)
@@ -31,24 +38,24 @@ bool  print_message(t_philo *philo, int state)
     printf("%ld %d is sleeping\n", curr_time, philo->index);
   else if (state == 3)
     printf("%ld %d is thinkink\n", curr_time, philo->index);
-  else
+  else if (state > 3)
+  {
+    sleep(5);
     printf("%ld %d died\n", curr_time, philo->index);
-  if (state <= 3)
-  {
+    *(philo->is_dead) = 1;
     pthread_mutex_unlock(philo->print_mutex);
-    return (0);
-  }
-  else
-  {
-    philo->ret_value = (void **) &philo->print_mutex;
+    pthread_mutex_unlock(philo->retval_mutex);
     return (1);
   }
+  pthread_mutex_unlock(philo->print_mutex);
+  pthread_mutex_unlock(philo->retval_mutex);
+  return (0);
 }
 
 void  ft_usleep(int param)
 {
-  int i; 
-  
+  int i;
+
   i = 1;
   while (param > (5 * i))
   {

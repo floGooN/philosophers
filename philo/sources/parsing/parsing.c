@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 13:46:59 by fberthou          #+#    #+#             */
-/*   Updated: 2024/04/28 11:19:17 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:50:13 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static bool ft_isdigit(char *arg)
 int	parsing(int argc, char **argv, int *tab_arg)
 {
 	size_t		i_argv;
-	short		i_tab_arg;
+	short		  i_tab_arg;
 	long int	tmp;
 
 	i_argv = 1;
@@ -60,8 +60,8 @@ int	parsing(int argc, char **argv, int *tab_arg)
 			if (tmp < 0 || tmp > INT_MAX)
 				return (print_error("Error -> last arg invalid\n"));
 		}
-		else 
-			if (tmp <= 0 || tmp > INT_MAX)
+		else
+			if (tmp < 0 || tmp > INT_MAX)
 				return (print_error("Error -> an argument is invalid\n"));
 		tab_arg[i_tab_arg] = (int) tmp;
 		i_argv++;

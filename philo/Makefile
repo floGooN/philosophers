@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+         #
+#    By: florian <florian@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 09:47:22 by fberthou          #+#    #+#              #
-#    Updated: 2024/05/03 14:21:26 by fberthou         ###   ########.fr        #
+#    Updated: 2024/05/04 16:33:48 by florian          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ SRC		=	$(MAIN_PATH)/main.c $(MAIN_PATH)/utils.c \
 			\
 			$(INIT_PATH)/init.c \
 			\
-			$(SIMULATION_PATH)/philo.c $(SIMULATION_PATH)/utils.c
+			$(SIMULATION_PATH)/philo.c $(SIMULATION_PATH)/simu_utils.c $(SIMULATION_PATH)/actions.c
 
 ### ---- TEMPORARY FILES ---- ###
 OBJ	= $(SRC:$(SRC_PATH)/%.c=$(BUILD_PATH)/%.o)
