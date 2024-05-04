@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/04 09:07:20 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/04 09:16:57 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void  *checker_routine(void *arg)
 
   checker = (t_check *) arg;
   pthread_join(checker->th_id, checker->ret_value);
-  return (checker->ret_value);
+  return (NULL);
 }
 
 bool  launcher(t_philo *philo_tab, t_check *check_tab)
