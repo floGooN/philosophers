@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/03 14:19:19 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/04 08:27:16 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ bool  sleep_routine(t_philo *lst)
 //   return (NULL);
 // }
 
-void  *routine_b(void *arg)
+void  *odd_routine(void *arg)
 {
   t_philo *curr_philo;
 
@@ -88,7 +88,7 @@ void  *routine_b(void *arg)
   return (curr_philo->print_mutex);
 }
 
-void  *routine_a(void *arg)
+void  *even_routine(void *arg)
 {
   t_philo *curr_philo;
 

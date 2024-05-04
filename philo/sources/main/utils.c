@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/03 22:59:28 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/04 07:47:08 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,21 +47,25 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (new_mem_place);
 }
 
-void  free_philo(t_philo *philo_tab, size_t tab_size)
+void  free_all(t_philo *philo_tab, size_t tab_size, t_check *checker)
 {
   size_t  i;
 
   i = 0;
-  if (!philo_tab)
-    return ;
-  while (i < tab_size)
+  if (philo_tab)
   {
     if (i == 0 && philo_tab[i].print_mutex)
       free(philo_tab[i].print_mutex);
-    if (philo_tab[i].args)
-      free(philo_tab[i].args);
-    if (philo_tab[i].fork_ptr)
-      free(philo_tab[i].fork_ptr);
+    while (i < tab_size)
+    {
+      if (philo_tab[i].args)
+        free(philo_tab[i].args);
+      if (philo_tab[i].fork_ptr)
+        free(philo_tab[i].fork_ptr);
+      i++;
+    }
+    free(philo_tab);
   }
-  free(philo_tab);
+  if (checker)
+    free(checker);
 }
