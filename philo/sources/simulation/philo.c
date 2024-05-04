@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/04 08:27:16 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/04 13:16:31 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,41 +23,45 @@ void  maj_time(struct timeval  *time_val, t_philo *philo, int *buffer);
 
 /* ====	PROTOTYPES	==== */
 
-bool  eat_routine(t_philo *lst)
+bool  eat_routine(t_philo *philo)
 {
   struct timeval  time_val[2];
 
-  lst->time_to_die = lst->args[1];
-  lst->time_to_eat = lst->args[2];
-	while (lst->time_to_eat > 0 && lst->time_to_die > 0)
+  philo->time_to_die = philo->args[1];
+  philo->time_to_eat = philo->args[2];
+	while (philo->time_to_eat > 0 || philo->time_to_die > 0 || !philo->ret_value)
 	{
 		gettimeofday(&time_val[0], NULL);
 		ft_usleep(10);
 		gettimeofday(&time_val[1], NULL);
-    maj_time(time_val, lst, &lst->time_to_eat);
+    maj_time(time_val, philo, &philo->time_to_eat);
 	}
-  if (lst->time_to_die <= 0)
-    return (print_message(lst, 4));
+  if (philo->ret_value)
+    return (1);
+  else if (philo->time_to_die <= 0)
+    return (print_message(philo, 4));
   else
-    return (print_message(lst, 1));
+    return (print_message(philo, 1));
 }
 
-bool  sleep_routine(t_philo *lst)
+bool  sleep_routine(t_philo *philo)
 {
   struct timeval  time_val[2];
 
-  lst->time_to_sleep = lst->args[3];
-	while (lst->time_to_sleep > 0 && lst->time_to_die > 0)
+  philo->time_to_sleep = philo->args[3];
+	while (philo->time_to_sleep > 0 || philo->time_to_die > 0 || !philo->ret_value)
 	{
 		gettimeofday(&time_val[0], NULL);
 		ft_usleep(10);
 		gettimeofday(&time_val[1], NULL);
-    maj_time(time_val, lst, &lst->time_to_sleep);
+    maj_time(time_val, philo, &philo->time_to_sleep);
 	}
-  if (lst->time_to_die <= 0)
-    return (print_message(lst, 4));
+  if (philo->ret_value)
+    return (1);
+  else if (philo->time_to_die <= 0)
+    return (print_message(philo, 4));
   else
-    return (print_message(lst, 2));
+    return (print_message(philo, 2));
 }
 
 // void *think_routine(void *arg)
@@ -75,17 +79,27 @@ void  *odd_routine(void *arg)
   t_philo *curr_philo;
 
   curr_philo = (t_philo *) arg;
-  gettimeofday(&curr_philo->philo_tv, NULL);
-  while (curr_philo->time_to_die)
+  while (1)
   {
-    if (curr_philo->time_to_die > 0)
-      if (eat_routine(curr_philo))
-        break ;
-    if (curr_philo->time_to_die > 0)
-      if (sleep_routine(curr_philo))
-        break ;
+    pthread_mutex_lock(curr_philo->ready_mutex);
+    if (curr_philo->ready)
+      break ;
+    else
+      pthread_mutex_unlock(curr_philo->ready_mutex);
   }
-  return (curr_philo->print_mutex);
+  pthread_mutex_unlock(curr_philo->ready_mutex);
+
+  gettimeofday(&curr_philo->philo_tv, NULL);
+  while (curr_philo->time_to_die > 0 && !curr_philo->ret_value)
+  {
+    if (curr_philo->time_to_die > 0 && !curr_philo->ret_value)
+      if (eat_routine(curr_philo))
+        return (NULL);
+    if (curr_philo->time_to_die > 0 && !curr_philo->ret_value)
+      if (sleep_routine(curr_philo))
+        return (NULL);
+  }
+  return (NULL);
 }
 
 void  *even_routine(void *arg)
@@ -93,15 +107,25 @@ void  *even_routine(void *arg)
   t_philo *curr_philo;
 
   curr_philo = (t_philo *) arg;
+  while (1)
+  {
+    pthread_mutex_lock(curr_philo->ready_mutex);
+    if (curr_philo->ready)
+      break ;
+    else
+      pthread_mutex_unlock(curr_philo->ready_mutex);
+  }
+  pthread_mutex_unlock(curr_philo->ready_mutex);
+
   gettimeofday(&curr_philo->philo_tv, NULL);
-  while (curr_philo->time_to_die)
+  while (curr_philo->time_to_die > 0 && !curr_philo->ret_value)
   {
     if (curr_philo->time_to_die > 0)
       if (sleep_routine(curr_philo))
-        break ;
+        return (NULL);
     if (curr_philo->time_to_die > 0)
       if (eat_routine(curr_philo))
-        break ;
+        return (NULL);
   }
-  return (curr_philo->print_mutex);
+  return (NULL);
 }

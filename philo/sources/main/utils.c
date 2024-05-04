@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/04 07:47:08 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/04 12:02:53 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,9 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (new_mem_place);
 }
 
-void  free_all(t_philo *philo_tab, size_t tab_size, t_check *checker)
+void  free_all(t_philo *philo_tab, int tab_size)
 {
-  size_t  i;
+  int  i;
 
   i = 0;
   if (philo_tab)
@@ -66,6 +66,6 @@ void  free_all(t_philo *philo_tab, size_t tab_size, t_check *checker)
     }
     free(philo_tab);
   }
-  if (checker)
-    free(checker);
+//   if (checker)
+//     free(checker);
 }

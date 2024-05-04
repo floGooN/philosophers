@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/03 14:20:07 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/04 13:15:55 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,22 +24,25 @@ bool  print_message(t_philo *philo, int state)
   curr_time = ((tv.tv_usec - philo->philo_tv.tv_usec) + (tv.tv_sec - philo->philo_tv.tv_sec));
   pthread_mutex_lock(philo->print_mutex);
   if (state == 0)
-    printf("%ld %zu has taken a fork\n", curr_time, philo->index);
+    printf("%ld %d has taken a fork\n", curr_time, philo->index);
   else if (state == 1)
-    printf("%ld %zu is eating\n", curr_time, philo->index);
+    printf("%ld %d is eating\n", curr_time, philo->index);
   else if (state == 2)
-    printf("%ld %zu is sleeping\n", curr_time, philo->index);
+    printf("%ld %d is sleeping\n", curr_time, philo->index);
   else if (state == 3)
-    printf("%ld %zu is thinkink\n", curr_time, philo->index);
+    printf("%ld %d is thinkink\n", curr_time, philo->index);
   else
-    printf("%ld %ld died\n", curr_time, philo->index);
+    printf("%ld %d died\n", curr_time, philo->index);
   if (state <= 3)
   {
     pthread_mutex_unlock(philo->print_mutex);
-    return (NULL);
+    return (0);
   }
   else
-    return (philo->print_mutex);
+  {
+    philo->ret_value = (void **) &philo->print_mutex;
+    return (1);
+  }
 }
 
 void  ft_usleep(int param)
