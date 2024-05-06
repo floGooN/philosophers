@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/04 19:33:26 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/05 09:02:32 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void wait_loop(t_philo *philo)
   while (1)
   {
     pthread_mutex_lock(philo->ready_mutex);
-    if (philo->ready)
+    if (*(philo->ready))
       break ;
     else
       pthread_mutex_unlock(philo->ready_mutex);
@@ -47,12 +47,12 @@ void  *odd_routine(void *arg)
 
   philo = (t_philo *) arg;
   wait_loop(philo);
+  // pthread_mutex_lock(philo->print_mutex);
+  // printf("ODD : deadtime = %d\n", philo->time_to_die);
+  // pthread_mutex_unlock(philo->print_mutex);
   gettimeofday(&philo->philo_tv, NULL);
   while (philo->time_to_die > 0 && !*(philo->is_dead))
   {
-    pthread_mutex_lock(philo->print_mutex);
-    printf("boolean is_dead = %d\n", *(philo->is_dead));
-    pthread_mutex_unlock(philo->print_mutex);
     if (!*(philo->is_dead))
     {
       if (eat_act(philo))
@@ -81,9 +81,9 @@ void  *even_routine(void *arg)
   gettimeofday(&philo->philo_tv, NULL);
   while (philo->time_to_die > 0 && !*(philo->is_dead))
   {
-    pthread_mutex_lock(philo->print_mutex);
-    printf("boolean is_dead = %d\n", *(philo->is_dead));
-    pthread_mutex_unlock(philo->print_mutex);
+    // pthread_mutex_lock(philo->print_mutex);
+    // printf("EVEN : deadtime = %d\n", philo->time_to_die);
+    // pthread_mutex_unlock(philo->print_mutex);
     if (!*(philo->is_dead))
     {
       if (sleep_act(philo))

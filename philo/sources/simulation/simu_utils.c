@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/04 19:30:23 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/05 08:51:55 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,13 @@ bool  print_message(t_philo *philo, int state)
   static struct timeval tv;
 
   gettimeofday(&tv, NULL);
-  curr_time = ((tv.tv_usec - philo->philo_tv.tv_usec) + (tv.tv_sec - philo->philo_tv.tv_sec));
-  pthread_mutex_lock(philo->print_mutex);
+  curr_time = ((tv.tv_usec - philo->philo_tv.tv_usec) + \
+              (tv.tv_sec - philo->philo_tv.tv_sec));
   pthread_mutex_lock(philo->retval_mutex);
-  if (philo->is_dead)
-  {
-    pthread_mutex_unlock(philo->print_mutex);
-    pthread_mutex_unlock(philo->retval_mutex);
-    return (1);
-  }
+  if (*(philo->is_dead))
+    return (pthread_mutex_unlock(philo->retval_mutex), 1);
+  //pthread_mutex_unlock(philo->retval_mutex);
+  //pthread_mutex_lock(philo->print_mutex);
   if (state == 0)
     printf("%ld %d has taken a fork\n", curr_time, philo->index);
   else if (state == 1)
@@ -40,15 +38,15 @@ bool  print_message(t_philo *philo, int state)
     printf("%ld %d is thinkink\n", curr_time, philo->index);
   else if (state > 3)
   {
-    sleep(5);
+    //pthread_mutex_lock(philo->retval_mutex);
     printf("%ld %d died\n", curr_time, philo->index);
     *(philo->is_dead) = 1;
-    pthread_mutex_unlock(philo->print_mutex);
     pthread_mutex_unlock(philo->retval_mutex);
+    //pthread_mutex_unlock(philo->print_mutex);
     return (1);
   }
-  pthread_mutex_unlock(philo->print_mutex);
   pthread_mutex_unlock(philo->retval_mutex);
+  //pthread_mutex_unlock(philo->print_mutex);
   return (0);
 }
 
