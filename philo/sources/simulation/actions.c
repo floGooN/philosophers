@@ -18,12 +18,68 @@ void  maj_time(struct timeval *time_val, t_philo *philo, int *buffer);
 /* ====	PROTOTYPES	==== */
 #include <unistd.h>
 
+void  find_fork(t_philo *philo)
+{
+  int i;
+  int min;
+  int max;
+
+  min = philo->index - philo->args[0];
+  max = philo->args[0] - philo->index;
+  i = 0;
+  while (!philo[i].left_fork)
+  {
+    pthread_mutex_lock(&philo[i].fork_ptr->fork_mutex);
+    if (!philo[i].fork_ptr->fork)
+    {
+      philo->left_fork = philo[i].fork_ptr;
+      pthread_mutex_unlock(&philo[i].fork_ptr->fork_mutex);
+      break ;
+    }
+    pthread_mutex_unlock(&philo[i].fork_ptr->fork_mutex);
+    if (*(philo[i].is_dead))
+      return ;
+    if ((i + 2) < max)
+      i += 2;
+    else
+      i = min;
+  }
+  i = min;
+  while (!philo[i].right_fork)
+  {
+    pthread_mutex_lock(&philo[i].fork_ptr->fork_mutex);
+    if (!philo[i].fork_ptr->fork)
+    {
+      philo[i].fork_ptr->fork = 1;
+      pthread_mutex_unlock(&philo[i].fork_ptr->fork_mutex);
+      break ;
+    }
+    pthread_mutex_unlock(&philo[i].fork_ptr->fork_mutex);
+    if ((i + 2) < max)
+      i += 2;
+    else
+      i = min;
+  }
+}
+
+bool  think_act(void *arg)
+{
+  t_philo         *philo;
+  struct timeval  time_val[2];
+
+  philo = (t_philo *) arg;
+  print_message(philo, 3);
+  find_fork(philo);
+  return (0);
+}
+
 bool  eat_act(t_philo *philo)
 {
   struct timeval  time_val[2];
 
   philo->time_to_die = philo->args[1];
   philo->time_to_eat = philo->args[2];
+  print_message(philo, 1);
 	while (philo->time_to_eat > 0 && philo->time_to_die > 0 && !*(philo->is_dead))
 	{
 		gettimeofday(&time_val[0], NULL);
@@ -36,10 +92,8 @@ bool  eat_act(t_philo *philo)
   // pthread_mutex_unlock(philo->print_mutex);
   if (*(philo->is_dead))
     return (1);
-  else if (philo->time_to_die <= 0)
+  if (philo->time_to_die <= 0)
     return (print_message(philo, 4));
-  else
-    return (print_message(philo, 1));
 }
 
 bool  sleep_act(t_philo *philo)
@@ -47,6 +101,7 @@ bool  sleep_act(t_philo *philo)
   struct timeval  time_val[2];
 
   philo->time_to_sleep = philo->args[3];
+  print_message(philo, 2);
 	while (philo->time_to_sleep > 0 && philo->time_to_die > 0 && !*(philo->is_dead))
 	{
 		gettimeofday(&time_val[0], NULL);
@@ -54,25 +109,11 @@ bool  sleep_act(t_philo *philo)
 		gettimeofday(&time_val[1], NULL);
     maj_time(time_val, philo, &philo->time_to_sleep);
 	}
-  // pthread_mutex_lock(philo->print_mutex);
-  // printf("SLEEP_ACT philo = %d, die = %d, dead = %d\n", philo->index, philo->time_to_die, *(philo->is_dead));
-  // pthread_mutex_unlock(philo->print_mutex);
   if (*(philo->is_dead))
-  {
     return (1);
-  }
-  else if (philo->time_to_die <= 0)
-  {
-    // pthread_mutex_lock(philo->print_mutex);
-    // printf("philo is_dead = %d\n", philo->index);
-    // pthread_mutex_unlock(philo->print_mutex);
+  if (philo->time_to_die <= 0)
     return (print_message(philo, 4));
-  }
-  else
-  {
     // pthread_mutex_lock(philo->print_mutex);
     // printf("philo is ok = %d\n", philo->index);
     // pthread_mutex_unlock(philo->print_mutex);
-    return (print_message(philo, 2));
-  }
 }

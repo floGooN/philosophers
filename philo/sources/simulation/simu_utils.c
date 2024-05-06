@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   simu_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/05 08:51:55 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/06 12:21:58 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ bool  print_message(t_philo *philo, int state)
   else if (state == 2)
     printf("%ld %d is sleeping\n", curr_time, philo->index);
   else if (state == 3)
-    printf("%ld %d is thinkink\n", curr_time, philo->index);
+    printf("%ld %d is thinking\n", curr_time, philo->index);
   else if (state > 3)
   {
     //pthread_mutex_lock(philo->retval_mutex);

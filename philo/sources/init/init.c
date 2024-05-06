@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/04 19:08:32 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/06 12:48:23 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,9 @@ t_philo	*socrate_maker(int tab_args[], bool *ready_ptr, bool *is_dead, \
     tab[i].ready = ready_ptr;
     tab[i].is_dead = is_dead;
     tab[i].args = tab_args;
-    pthread_mutex_init(&tab[i].fork_ptr->fork_mutex[0], NULL);
-    pthread_mutex_init(&tab[i].fork_ptr->fork_mutex[1], NULL);
+    tab[i].left_fork = NULL;
+    tab[i].right_fork = NULL;
+    pthread_mutex_init(&tab[i].fork_ptr->fork_mutex, NULL);
     i++;
   }
   return (tab);
