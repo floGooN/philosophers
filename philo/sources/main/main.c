@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/06 10:26:01 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/13 15:02:41 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,11 @@ int	main(int argc, char **argv)
   is_dead = 0;
   pthread_mutex_init(&ready_isdead_mutex[0], NULL);
   pthread_mutex_init(&ready_isdead_mutex[1], NULL);
+
   if (parsing(argc, argv, tab_arg)) // init last arg
     return (0);
+
+
   if (argc == 5)
   {
     philo_tab = socrate_maker(&tab_arg, &ready, &is_dead, ready_isdead_mutex);
