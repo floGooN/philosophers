@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/04 18:46:53 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/13 17:38:38 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,16 @@ void  free_all(t_philo *philo_tab, int tab_size)
   int  i;
 
   i = 0;
-  if (philo_tab)
+  if (philo_tab && tab_size > 0)
   {
-    if (i == 0 && philo_tab[i].print_mutex)
-      free(philo_tab[i].print_mutex);
+	pthread_mutex_destroy(philo_tab[i].print_mutex);
+	pthread_mutex_destroy(philo_tab[i].ready_mutex);
+	pthread_mutex_destroy(philo_tab[i].isdead_mutex);
+	free(philo_tab[i].print_mutex);
     while (i < tab_size)
     {
-      if (philo_tab[i].fork_ptr)
-        free(philo_tab[i].fork_ptr);
-      i++;
+		pthread_mutex_destroy(&(philo_tab[i].fork_mutex));
+		i++;
     }
     free(philo_tab);
   }

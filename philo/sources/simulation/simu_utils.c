@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/06 12:21:58 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/14 11:56:39 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,39 +15,43 @@
 #include <unistd.h>
 #include <sys/time.h>
 
+#include "action.h"
+
 bool  print_message(t_philo *philo, int state)
 {
-  static long int       curr_time;
-  static struct timeval tv;
+  long int       curr_time;
+  struct timeval tv;
 
   gettimeofday(&tv, NULL);
   curr_time = ((tv.tv_usec - philo->philo_tv.tv_usec) + \
               (tv.tv_sec - philo->philo_tv.tv_sec));
-  pthread_mutex_lock(philo->retval_mutex);
-  if (*(philo->is_dead))
-    return (pthread_mutex_unlock(philo->retval_mutex), 1);
-  //pthread_mutex_unlock(philo->retval_mutex);
-  //pthread_mutex_lock(philo->print_mutex);
-  if (state == 0)
-    printf("%ld %d has taken a fork\n", curr_time, philo->index);
-  else if (state == 1)
-    printf("%ld %d is eating\n", curr_time, philo->index);
-  else if (state == 2)
-    printf("%ld %d is sleeping\n", curr_time, philo->index);
-  else if (state == 3)
-    printf("%ld %d is thinking\n", curr_time, philo->index);
-  else if (state > 3)
+  pthread_mutex_lock(philo->print_mutex);
+  printf("%d TAKE MUTEX\n", philo->index);
+  if (ISDEAD_PTR)
   {
-    //pthread_mutex_lock(philo->retval_mutex);
-    printf("%ld %d died\n", curr_time, philo->index);
-    *(philo->is_dead) = 1;
-    pthread_mutex_unlock(philo->retval_mutex);
-    //pthread_mutex_unlock(philo->print_mutex);
+    printf("%d DROP MUTEX IN CONDITION\n", philo->index);
+    pthread_mutex_unlock(philo->print_mutex);
     return (1);
   }
-  pthread_mutex_unlock(philo->retval_mutex);
-  //pthread_mutex_unlock(philo->print_mutex);
-  return (0);
+  if (!ISDEAD_PTR && state == 0)
+    printf("%ld %d has taken a fork\n", curr_time, philo->index);
+  else if (!ISDEAD_PTR && state == 1)
+    printf("%ld %d is eating\n", curr_time, philo->index);
+  else if (!ISDEAD_PTR && state == 2)
+    printf("%ld %d is sleeping\n", curr_time, philo->index);
+  else if (!ISDEAD_PTR && state == 3)
+    printf("%ld %d is thinking\n", curr_time, philo->index);
+  else if (!ISDEAD_PTR && state > 3)
+  {
+    ISDEAD_PTR = 1;
+    printf("%ld %d died\n", curr_time, philo->index);
+    pthread_mutex_unlock(philo->print_mutex);
+    return (1);
+  }
+  if (pthread_mutex_unlock(philo->print_mutex))
+    return (1);
+  printf("%d DROP MUTEX\n", philo->index);
+  return (write(1, "ICI\n", 4), 0);
 }
 
 void  ft_usleep(int param)

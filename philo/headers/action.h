@@ -1,24 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.h                                             :+:      :+:    :+:   */
+/*   action.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/02 18:17:59 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/13 15:58:41 by fberthou         ###   ########.fr       */
+/*   Created: 2024/05/13 15:57:37 by fberthou          #+#    #+#             */
+/*   Updated: 2024/05/14 11:22:54 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef INIT_H
-# define INIT_H
+#ifndef ACTION_H
+# define ACTION_H
 
-# include <stdlib.h>
-
-# define TAB_ERROR   "Error -> init philo tab\n"
-
-void	*ft_calloc(size_t nmemb, size_t size);
-void  free_all(t_philo *philo_tab, size_t tab_size);
-int		print_error(char *str);
+#  define ISDEAD_PTR *(philo->is_dead)
+#  define READY_PTR *(philo->ready)
 
 #endif

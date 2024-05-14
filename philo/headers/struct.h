@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/06 12:45:43 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/13 16:48:06 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,36 +24,30 @@
 //   void      **ret_value;
 // } t_check ;
 
-typedef struct  s_fork
-{
-  pthread_mutex_t fork_mutex;
-  bool            fork;
-} t_fork ;
-
 typedef struct s_philo
 {
 	pthread_t		    philo_id;
   struct timeval  philo_tv;
-
+  
   pthread_mutex_t *print_mutex;
   pthread_mutex_t *ready_mutex;
-  pthread_mutex_t *retval_mutex;
-  
+  pthread_mutex_t *isdead_mutex;
+
+  pthread_mutex_t fork_mutex;
+  bool            fork;
+
+  pthread_mutex_t *right_fork;
+  pthread_mutex_t * left_fork;
+
   int             index;
   int             time_to_die;
   int             time_to_eat;
   int             time_to_sleep;
   int             nb_meal;
-  unsigned short  nb_fork;
   bool            *ready;
   bool            *is_dead;
 
-  // following ptr -> malloc in init
 	int				      *args;
-  struct s_fork   *fork_ptr;
-  struct s_fork   *left_fork;
-  struct s_fork   *right_fork;
-
 }	t_philo ;
 
 #endif

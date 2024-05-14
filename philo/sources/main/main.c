@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/13 15:02:41 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/14 10:12:46 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <sys/time.h>
 
 #include <unistd.h>
-
 
 /* ====	PROTOTYPES	==== */
 
@@ -31,7 +30,6 @@ void  free_all(t_philo *philo_tab, int tab_size);
 // init/init.c
 t_philo	*socrate_maker(int (*tab_args)[5], bool *ready_ptr, bool *is_dead, \
                                         pthread_mutex_t *ready_isdead_mutex);
-//t_check *checker_init(size_t tab_size, bool *ready, void **is_dead);
 
 // main/philo.c
 void  *odd_routine(void *arg);
@@ -73,12 +71,12 @@ int	main(int argc, char **argv)
     return (printf("Nb of arguments is invalid\n"), 0);
   ready = 0;
   is_dead = 0;
+
   pthread_mutex_init(&ready_isdead_mutex[0], NULL);
   pthread_mutex_init(&ready_isdead_mutex[1], NULL);
 
   if (parsing(argc, argv, tab_arg)) // init last arg
     return (0);
-
 
   if (argc == 5)
   {
@@ -87,12 +85,11 @@ int	main(int argc, char **argv)
         return (0);
     if (launcher(philo_tab, tab_arg[0]))
         return (free_all(philo_tab, tab_arg[0]), 0);
-    pthread_mutex_lock(&ready_isdead_mutex[0]);
     ready = 1;
-    pthread_mutex_unlock(&ready_isdead_mutex[0]);
     while (!is_dead)
       ;
-    usleep(500000);
+    // printf("\nEND\n\n");
+    sleep(1);
     free_all(philo_tab, tab_arg[0]);
   }
   return (0);
