@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/14 11:56:39 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/15 15:20:00 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,25 @@
 #include "stdio.h"
 #include <unistd.h>
 #include <sys/time.h>
+#include <stdlib.h>
 
 #include "action.h"
 
+long int  get_time(void);
+
 bool  print_message(t_philo *philo, int state)
 {
-  long int       curr_time;
-  struct timeval tv;
+  long int        curr_time;
+  struct timeval  tv;
+  long int        tmp1;
 
-  gettimeofday(&tv, NULL);
-  curr_time = ((tv.tv_usec - philo->philo_tv.tv_usec) + \
-              (tv.tv_sec - philo->philo_tv.tv_sec));
-  pthread_mutex_lock(philo->print_mutex);
-  printf("%d TAKE MUTEX\n", philo->index);
+  tmp1 = get_time();
+  curr_time = tmp1 - philo->start_time;
+  if (pthread_mutex_lock(philo->print_mutex))
+    return (print_error("FAIL TAKE MUTEX\n"));
   if (ISDEAD_PTR)
   {
-    printf("%d DROP MUTEX IN CONDITION\n", philo->index);
+    printf("%d DROP MUTEX IN DEAD CONDITION\n", philo->index);
     pthread_mutex_unlock(philo->print_mutex);
     return (1);
   }
@@ -49,29 +52,25 @@ bool  print_message(t_philo *philo, int state)
     return (1);
   }
   if (pthread_mutex_unlock(philo->print_mutex))
-    return (1);
-  printf("%d DROP MUTEX\n", philo->index);
-  return (write(1, "ICI\n", 4), 0);
+    return (print_error("FAIL DROP MUTEX\n"), 1);
+  return (0);
 }
 
-void  ft_usleep(int param)
+long int  get_time(void)
 {
-  int i;
-
-  i = 1;
-  while (param > (5 * i))
-  {
-    usleep(5);
-    i++;
-  }
+	struct timeval	tv;
+	
+	if (gettimeofday(&tv, NULL))
+		return (print_error("gettimeofday() FAILURE\n"), -1);
+	return ((long) (tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-void  maj_time(struct timeval  *time_val, t_philo *philo, int *buffer)
+int	ft_usleep(int time)
 {
-  int tmp;
+	long int	start;
 
-  tmp = ((time_val[1].tv_usec - time_val[0].tv_usec) + \
-              (time_val[1].tv_sec - time_val[0].tv_sec));
-  philo->time_to_die -= tmp;
-  *buffer -= tmp;
+	start = get_time();
+	while ((get_time() - start) < time)
+		usleep(time / 10);
+	return(0);
 }
