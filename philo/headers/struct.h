@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/14 18:22:44 by florian          ###   ########.fr       */
+/*   Updated: 2024/05/16 19:07:38 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 typedef struct s_philo
 {
 	pthread_t		    philo_id;
-  struct timeval  philo_tv;
+  long int        start_time;
 
   pthread_mutex_t *print_mutex;
   pthread_mutex_t *ready_mutex;
@@ -33,9 +33,9 @@ typedef struct s_philo
   pthread_mutex_t *left_fork;
 
   int             index;
-  int             time_to_die;
-  int             time_to_eat;
-  int             time_to_sleep;
+  long int        time_to_die;
+  long int        time_to_eat;
+  long int        time_to_sleep;
   int             nb_meal;
   bool            *ready;
   bool            *is_dead;
