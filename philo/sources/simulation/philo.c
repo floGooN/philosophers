@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/16 11:39:40 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/16 19:44:42 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,19 @@ void  *odd_routine(void *arg)
   philo->start_time = get_time();
   while (1)
   {
-    if (check_death(philo) || think_act(philo))
-      break;
-    if (check_death(philo) || eat_act(philo))
-      break;
-    if (check_death(philo) || sleep_act(philo))
-      break;
+    usleep(50);
+    if (pthread_mutex_lock(philo->print_mutex))
+      return (print_error ("error -> failure to take print_mutex\n"), NULL);
+    printf("ODD philo %d\n", philo->index);
+    if (pthread_mutex_unlock(philo->print_mutex))
+      return (print_error ("error -> failure to drop print_mutex\n"), NULL);
+
+    // if (check_death(philo) || think_act(philo))
+    //   break;
+    // if (check_death(philo) || eat_act(philo))
+    //   break;
+    // if (check_death(philo) || sleep_act(philo))
+    //   break;
     // if (philo->nb_meal == 0)
     //   break ;
   }
@@ -67,14 +74,21 @@ void  *even_routine(void *arg)
   philo->start_time = get_time();
   while (1)
   {
-    if (check_death(philo) || sleep_act(philo))
-      break;
-    if (check_death(philo) || think_act(philo))
-      break;
-    // if (philo->nb_meal == 0)
-    //   break ;
-    if (check_death(philo) || eat_act(philo))
-        break;
+    usleep(77);
+    if (pthread_mutex_lock(philo->print_mutex))
+      return (print_error ("error -> failure to take print_mutex\n"), NULL);
+    printf("EVEN philo %d\n", philo->index);
+    if (pthread_mutex_unlock(philo->print_mutex))
+      return (print_error ("error -> failure to drop print_mutex\n"), NULL);
+
+    // if (check_death(philo) || sleep_act(philo))
+    //   break;
+    // if (check_death(philo) || think_act(philo))
+    //   break;
+    // // if (philo->nb_meal == 0)
+    // //   break ;
+    // if (check_death(philo) || eat_act(philo))
+    //     break;
   }
   return (NULL);
 }
