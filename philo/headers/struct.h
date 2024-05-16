@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/13 16:48:06 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/14 18:22:44 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,11 @@
 #include <stdbool.h>
 #include <sys/time.h>
 
-// typedef struct s_checker
-// {
-//   pthread_t th_id;
-//   bool      *ready_ptr;
-//   void      **ret_value;
-// } t_check ;
-
 typedef struct s_philo
 {
 	pthread_t		    philo_id;
   struct timeval  philo_tv;
-  
+
   pthread_mutex_t *print_mutex;
   pthread_mutex_t *ready_mutex;
   pthread_mutex_t *isdead_mutex;
@@ -37,7 +30,7 @@ typedef struct s_philo
   bool            fork;
 
   pthread_mutex_t *right_fork;
-  pthread_mutex_t * left_fork;
+  pthread_mutex_t *left_fork;
 
   int             index;
   int             time_to_die;
