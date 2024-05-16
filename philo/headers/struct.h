@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/15 13:49:32 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/16 09:27:36 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,9 @@
 #include <stdbool.h>
 #include <sys/time.h>
 
-// typedef struct s_checker
-// {
-//   pthread_t th_id;
-//   bool      *ready_ptr;
-//   void      **ret_value;
-// } t_check ;
-
 typedef struct s_philo
 {
 	pthread_t		    philo_id;
-  struct timeval  philo_tv;
   long int        start_time;
   
   pthread_mutex_t *print_mutex;
@@ -38,12 +30,12 @@ typedef struct s_philo
   bool            fork;
 
   pthread_mutex_t *right_fork;
-  pthread_mutex_t * left_fork;
+  pthread_mutex_t *left_fork;
 
   int             index;
-  long int             time_to_die;
-  long int             time_to_eat;
-  long int             time_to_sleep;
+  long int        time_to_die;
+  long int        time_to_eat;
+  long int        time_to_sleep;
   int             nb_meal;
   bool            *ready;
   bool            *is_dead;

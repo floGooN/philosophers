@@ -14,27 +14,64 @@
 
 /* ====	PROTOTYPES	==== */
 
-bool      print_message(t_philo *philo, int state);
+bool      print_message(t_philo *philo, int action);
 void      ft_usleep(int time);
 long int  get_time(void);
+bool      check_death(t_philo *philo);
+
 
 /* ====	PROTOTYPES	==== */
 
-// bool  think_act(void *arg)
-// {
-//   t_philo         *philo;
-//   struct timeval  time_val[2];
 
-//   philo = (t_philo *) arg;
-//   print_message(philo, 3);
-//   find_fork(philo);
-//   return (0);
-// }
+bool  find_fork(t_philo *philo)
+{
+  if (philo->index % 2)
+  {
+    if (pthread_mutex_lock(&philo->fork_mutex))
+      return (1); // error taking mutex
+    if (print_message(philo, 0))
+      return (pthread_mutex_unlock(&philo->fork_mutex), 1);
+
+    if (pthread_mutex_lock(&philo[philo->index + 1].fork_mutex))
+      return (1); // error taking mutex
+    if (print_message(philo, 0))
+      return (pthread_mutex_unlock(&philo[philo->index + 1].fork_mutex), \
+              pthread_mutex_unlock(&philo->fork_mutex), 1);
+  }
+  else
+  {
+    if (pthread_mutex_lock(&philo[philo->index + 1].fork_mutex))
+      return (1); // error taking mutex
+    if (print_message(philo, 0))
+      return (pthread_mutex_unlock(&philo[philo->index + 1].fork_mutex), 1);
+    if (pthread_mutex_lock(&philo->fork_mutex))
+      return (1); // error taking mutex
+    if (print_message(philo, 0))
+      return (pthread_mutex_unlock(&philo[philo->index + 1].fork_mutex), \
+              pthread_mutex_unlock(&philo->fork_mutex), 1);
+  }
+  return (0);
+}
+
+bool  drop_forks(t_philo *philo)
+{
+  if (pthread_mutex_unlock(&philo[philo->index + 1].fork_mutex) || \
+      pthread_mutex_unlock(&philo->fork_mutex))
+    return (1);
+  return (0);
+}
+
+bool  think_act(void *arg)
+{
+  t_philo         *philo;
+
+  philo = (t_philo *) arg;
+  print_message(philo, 3);
+  return (find_fork(philo));
+}
 
 bool  eat_act(t_philo *philo)
 {
-  struct timeval  time_val0;
-  struct timeval  time_val1;
   long int        time1;
   long int        time2;
 
@@ -47,22 +84,17 @@ bool  eat_act(t_philo *philo)
   time2 = get_time();
   philo->time_to_die -= time2 - time1;
   philo->time_to_eat -= time2 - time1;
-  pthread_mutex_lock(philo->isdead_mutex);
-  if (ISDEAD_PTR)
-  {
-    pthread_mutex_unlock(philo->isdead_mutex);
+
+  if (check_death(philo))
     return (1);
-  }
-  pthread_mutex_unlock(philo->isdead_mutex);
+
   if (philo->time_to_die <= 0)
     return (print_message(philo, 4));
-  return (0);
+  return (drop_forks(philo));
 }
 
 bool  sleep_act(t_philo *philo)
 {
-  struct timeval  time_val0;
-  struct timeval  time_val1;
   long int        time1;
   long int        time2;
 
@@ -74,13 +106,10 @@ bool  sleep_act(t_philo *philo)
   time2 = get_time();
   philo->time_to_die -= time2 - time1;
   philo->time_to_sleep -= time2 - time1;
-  pthread_mutex_lock(philo->isdead_mutex);
-  if (ISDEAD_PTR)
-  {
-    pthread_mutex_unlock(philo->isdead_mutex);
+
+  if (check_death(philo))
     return (1);
-  }
-  pthread_mutex_unlock(philo->isdead_mutex);
+
   if (philo->time_to_die <= 0)
     return (print_message(philo, 4));
   return (0);

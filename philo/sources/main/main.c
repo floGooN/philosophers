@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/15 18:09:35 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/05/16 09:16:32 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,14 +69,15 @@ int	main(int argc, char **argv)
 
   if (argc != 5 && argc != 6)
     return (print_error("Nb of arguments is invalid\n"), 0);
-  ready = 0;
-  is_dead = 0;
-
-  pthread_mutex_init(&ready_isdead_mutex[0], NULL);
-  // pthread_mutex_init(&ready_isdead_mutex[1], NULL);
-
   if (parsing(argc, argv, tab_arg)) // init last arg
     return (0);
+
+  // INIT MAIN THREAD FUNCTION
+  ready = 0;
+  is_dead = 0;
+  pthread_mutex_init(&ready_isdead_mutex[0], NULL);
+  pthread_mutex_init(&ready_isdead_mutex[1], NULL);
+  // INIT MAIN THREAD FUNCTION
 
   if (argc == 5)
   {
@@ -85,9 +86,12 @@ int	main(int argc, char **argv)
         return (0);
     if (launcher(philo_tab, tab_arg[0]))
         return (free_all(philo_tab, tab_arg[0]), 0);
+
+
+  // MAIN THREAD ROUTINE FUNCTION
     pthread_mutex_lock(&ready_isdead_mutex[0]);
     ready = 1;
-    pthread_mutex_unlock(&ready_isdead_mutex[0]);
+    pthread_mutex_unlock(&ready_isdead_mutex[0]); 
     while (1)
     {
       pthread_mutex_lock(&ready_isdead_mutex[1]);
@@ -98,14 +102,12 @@ int	main(int argc, char **argv)
       }
       pthread_mutex_unlock(&ready_isdead_mutex[1]);
     }
+  // MAIN THREAD ROUTINE FUNCTION
+
+
+
     usleep(5000);
     free_all(philo_tab, tab_arg[0]);
   }
   return (0);
 }
-	/*
-	if (tab_arg[1] < tab_arg[2] || tab_arg[1] < tab_arg[3])
-		// incoherent argument
-	else
-		// eat %d time and die
-	*/
