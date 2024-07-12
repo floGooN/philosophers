@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/12 12:20:03 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/12 12:40:49 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int	main(int argc, char **argv)
     if (main_routine(&main_th))
       return (5);
   }
-  usleep(500);
+  usleep(5000);
   free_all(philo_tab, tab_arg[0]);
   return (0);
 }

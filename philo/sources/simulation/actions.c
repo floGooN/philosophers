@@ -94,8 +94,8 @@ bool  eat_act(t_philo *philo)
 
 bool  sleep_act(t_philo *philo)
 {
-  long int        time1;
-  long int        time2;
+  long int  time1;
+  long int  time2;
 
   philo->time_data.time_to_sleep = philo->time_data.args[3];
   if (print_message(philo, 2))
