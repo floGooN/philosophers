@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/16 09:16:32 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/12 12:20:03 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ int		print_error(char *str);
 void  free_all(t_philo *philo_tab, int tab_size);
 
 // init/init.c
-t_philo	*socrate_maker(int (*tab_args)[5], bool *ready_ptr, bool *is_dead, \
-                                        pthread_mutex_t *ready_isdead_mutex);
+void  init_main_thread(t_main_th *main_th);
+t_philo	*socrate_maker(int tab_args[], t_main_th *main_th);
 
 // main/philo.c
 void  *odd_routine(void *arg);
@@ -37,7 +37,7 @@ void  *even_routine(void *arg);
 
 /* ====	PROTOTYPES	==== */
 
-bool  launcher(t_philo *philo_tab, int tab_size)
+static bool launcher(t_philo *philo_tab, int tab_size)
 {
   int  i;
 
@@ -59,55 +59,46 @@ bool  launcher(t_philo *philo_tab, int tab_size)
   return (0);
 }
 
-int	main(int argc, char **argv)
+static int main_routine(t_main_th *main_th)
 {
-  int		          tab_arg[5];
-  t_philo         *philo_tab;
-  pthread_mutex_t ready_isdead_mutex[2];
-  bool            is_dead;
-  bool            ready;
-
-  if (argc != 5 && argc != 6)
-    return (print_error("Nb of arguments is invalid\n"), 0);
-  if (parsing(argc, argv, tab_arg)) // init last arg
-    return (0);
-
-  // INIT MAIN THREAD FUNCTION
-  ready = 0;
-  is_dead = 0;
-  pthread_mutex_init(&ready_isdead_mutex[0], NULL);
-  pthread_mutex_init(&ready_isdead_mutex[1], NULL);
-  // INIT MAIN THREAD FUNCTION
-
-  if (argc == 5)
-  {
-    philo_tab = socrate_maker(&tab_arg, &ready, &is_dead, ready_isdead_mutex);
-    if (!philo_tab)
-        return (0);
-    if (launcher(philo_tab, tab_arg[0]))
-        return (free_all(philo_tab, tab_arg[0]), 0);
-
-
-  // MAIN THREAD ROUTINE FUNCTION
-    pthread_mutex_lock(&ready_isdead_mutex[0]);
-    ready = 1;
-    pthread_mutex_unlock(&ready_isdead_mutex[0]); 
+    pthread_mutex_lock(&main_th->ready_mutex);
+    main_th->ready = 1;
+    pthread_mutex_unlock(&main_th->ready_mutex); 
     while (1)
     {
-      pthread_mutex_lock(&ready_isdead_mutex[1]);
-      if (is_dead)
+      pthread_mutex_lock(&main_th->isdead_mutex);
+      if (main_th->is_dead)
       {
-        pthread_mutex_unlock(&ready_isdead_mutex[1]);
+        pthread_mutex_unlock(&main_th->isdead_mutex);
         break;
       }
-      pthread_mutex_unlock(&ready_isdead_mutex[1]);
+      pthread_mutex_unlock(&main_th->isdead_mutex);
     }
-  // MAIN THREAD ROUTINE FUNCTION
+    return (0);
+}
 
-
-
-    usleep(5000);
-    free_all(philo_tab, tab_arg[0]);
+int	main(int argc, char **argv)
+{
+  int       tab_arg[5];
+  t_philo   *philo_tab;
+  t_main_th main_th;
+  
+  if (argc != 5 && argc != 6)
+    return (print_error("Nb of arguments is invalid\n"), 1);
+  if (parsing(argc, argv, tab_arg))
+    return (2);
+  init_main_thread(&main_th);
+  if (argc == 5)
+  {
+    philo_tab = socrate_maker(tab_arg, &main_th);
+    if (!philo_tab)
+        return (3);
+    if (launcher(philo_tab, tab_arg[0]))
+        return (free_all(philo_tab, tab_arg[0]), 4);
+    if (main_routine(&main_th))
+      return (5);
   }
+  usleep(500);
+  free_all(philo_tab, tab_arg[0]);
   return (0);
 }

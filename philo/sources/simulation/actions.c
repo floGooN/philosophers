@@ -22,7 +22,6 @@ bool      check_death(t_philo *philo);
 
 /* ====	PROTOTYPES	==== */
 
-
 bool  find_fork(t_philo *philo)
 {
   if (philo->index % 2)
@@ -75,20 +74,20 @@ bool  eat_act(t_philo *philo)
   long int        time1;
   long int        time2;
 
-  philo->time_to_die = philo->args[1];
-  philo->time_to_eat = philo->args[2];
+  philo->time_data.time_to_die = philo->time_data.args[1];
+  philo->time_data.time_to_eat = philo->time_data.args[2];
   if (print_message(philo, 1))
     return (1);
   time1 = get_time();
-  ft_usleep(philo->time_to_eat);
+  ft_usleep(philo->time_data.time_to_eat);
   time2 = get_time();
-  philo->time_to_die -= time2 - time1;
-  philo->time_to_eat -= time2 - time1;
+  philo->time_data.time_to_die -= time2 - time1;
+  philo->time_data.time_to_eat -= time2 - time1;
 
   if (check_death(philo))
     return (1);
 
-  if (philo->time_to_die <= 0)
+  if (philo->time_data.time_to_die <= 0)
     return (print_message(philo, 4));
   return (drop_forks(philo));
 }
@@ -98,19 +97,18 @@ bool  sleep_act(t_philo *philo)
   long int        time1;
   long int        time2;
 
-  philo->time_to_sleep = philo->args[3];
+  philo->time_data.time_to_sleep = philo->time_data.args[3];
   if (print_message(philo, 2))
     return (1);
   time1 = get_time();
-  ft_usleep(philo->time_to_sleep);
+  ft_usleep(philo->time_data.time_to_sleep);
   time2 = get_time();
-  philo->time_to_die -= time2 - time1;
-  philo->time_to_sleep -= time2 - time1;
+  philo->time_data.time_to_die -= time2 - time1;
+  philo->time_data.time_to_sleep -= time2 - time1;
 
   if (check_death(philo))
     return (1);
-
-  if (philo->time_to_die <= 0)
+  if (philo->time_data.time_to_die <= 0)
     return (print_message(philo, 4));
   return (0);
 }

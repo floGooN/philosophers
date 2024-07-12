@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/16 10:57:55 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/12 12:13:50 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,9 @@ int	ft_usleep(int time)
 bool  change_death_status(t_philo *philo)
 {
   pthread_mutex_lock(philo->isdead_mutex);
-  if (!ISDEAD_PTR)
+  if (!*(philo->is_dead))
   {
-    ISDEAD_PTR = 1;
+    *(philo->is_dead) = 1;
     return (pthread_mutex_unlock(philo->isdead_mutex), 0);
   }
   else
@@ -67,7 +67,7 @@ bool  print_message(t_philo *philo, int action)
   long int  tmp;
 
   tmp = get_time();
-  curr_time = tmp - philo->start_time;
+  curr_time = tmp - philo->time_data.start_time;
   if (pthread_mutex_lock(philo->print_mutex))
     return (print_error ("error -> failure to take print_mutex\n"));
   if (check_death(philo))
