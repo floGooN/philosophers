@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/15 16:45:10 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/15 19:53:10 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,9 @@ static int main_routine(t_main_th *main_th)
 
 int	main(int argc, char **argv)
 {
-    int       tab_arg[5];
-    t_philo   *philo_tab;
-    t_main_th main_th;
+    int         tab_arg[5];
+    t_philo     *philo_tab;
+    t_main_th   main_th;
 
     if (argc != 5 && argc != 6)
         return (print_error("Nb of arguments is invalid\n"), 1);
@@ -64,15 +64,15 @@ int	main(int argc, char **argv)
         return (2);
     init_main_thread(&main_th);
     if (argc == 5)
-    {
-        philo_tab = socrate_maker(&main_th, tab_arg);
-        if (!philo_tab)
-            return (3);
-        if (launcher(philo_tab, tab_arg[0]))
-            return (free_all(philo_tab, tab_arg[0]), 4);
-        if (main_routine(&main_th))
+        philo_tab = socrate_maker(&main_th, tab_arg, 0);
+    else
+        philo_tab = socrate_maker(&main_th, tab_arg, 1);
+    if (!philo_tab)
+        return (3);
+    if (launcher(philo_tab, tab_arg[0]))
+        return (free_all(philo_tab, tab_arg[0]), 4);
+    if (main_routine(&main_th))
         return (5);
-    }
     usleep(5000);
     free_all(philo_tab, tab_arg[0]);
     return (0);
