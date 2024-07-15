@@ -6,22 +6,17 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/09 17:56:30 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/15 16:57:31 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
-#include "stdio.h"
-#include <unistd.h>
-#include <sys/time.h>
-#include <stdlib.h>
-
-#include "action.h"
+#include <struct.h>
+#include <philo.h>
 
 bool  check_death(t_philo *philo)
 {
     pthread_mutex_lock(philo->isdead_mutex);
-    if (ISDEAD_PTR)
+    if (*(philo->is_dead))
     {
       pthread_mutex_unlock(philo->isdead_mutex);
       return (1);
@@ -39,22 +34,21 @@ time_t  get_time(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-int	ft_usleep(int time)
+void    ft_usleep(long time)
 {
-	long int	start;
+    long int	start;
 
-	start = get_time();
-	while ((get_time() - start) < time)
-		usleep(time / 10);
-	return(0);
+    start = get_time();
+    while ((get_time() - start) < time)
+        usleep(time / 10);
 }
 
 bool  change_death_status(t_philo *philo)
 {
   pthread_mutex_lock(philo->isdead_mutex);
-  if (!ISDEAD_PTR)
+  if (!*(philo->is_dead))
   {
-    ISDEAD_PTR = 1;
+    *(philo->is_dead) = 1;
     return (pthread_mutex_unlock(philo->isdead_mutex), 0);
   }
   else
@@ -66,8 +60,9 @@ bool  print_message(t_philo *philo, int action)
   long int  curr_time;
   long int  tmp;
 
+//   GET_TIME(tmp);
   tmp = get_time();
-  curr_time = tmp - philo->start_time;
+  curr_time = tmp - philo->time_data.start_time;
   if (pthread_mutex_lock(philo->print_mutex))
     return (print_error ("error -> failure to take print_mutex\n"));
   if (check_death(philo))

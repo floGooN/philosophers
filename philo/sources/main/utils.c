@@ -3,17 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/13 17:38:38 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/15 16:48:11 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "struct.h"
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
+#include <struct.h>
+#include <philo.h>
 
 size_t	ft_strlen(const char *str)
 {
@@ -27,12 +25,12 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
-int	print_error(char *str)
+int	print_error(const char *str)
 {
 	return (write(2, str, ft_strlen(str)));
 }
 
-void	*ft_calloc(size_t nmemb, size_t size)
+void    *ft_calloc(size_t nmemb, size_t size)
 {
 	void	*new_mem_place;
 	size_t	total_memory_size;

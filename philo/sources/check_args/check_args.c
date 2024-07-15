@@ -6,19 +6,11 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 13:46:59 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/09 16:52:25 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/15 15:12:37 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
-
-/* ====	PROTOTYPES	==== */
-long	ft_atoi(const char *nptr);
-int		print_error(char *str);
-/* ====	PROTOTYPES	==== */
+#include <philo.h>
 
 static bool ft_isdigit(char *arg)
 {
