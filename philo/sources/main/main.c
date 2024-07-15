@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/16 09:16:32 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/09 17:48:00 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,14 @@
 /* ====	PROTOTYPES	==== */
 
 // parsing/parsing.c
-int		parsing(int argc, char **argv, int *tab_arg);
+int		check_args(int argc, char **argv, int *tab_arg);
 
 // main/utils.c
 int		print_error(char *str);
 void  free_all(t_philo *philo_tab, int tab_size);
 
 // init/init.c
-t_philo	*socrate_maker(int (*tab_args)[5], bool *ready_ptr, bool *is_dead, \
-                                        pthread_mutex_t *ready_isdead_mutex);
+t_philo	*socrate_maker(t_main_th *th_master);
 
 // main/philo.c
 void  *odd_routine(void *arg);
@@ -44,7 +43,7 @@ bool  launcher(t_philo *philo_tab, int tab_size)
   i = 0;
   while (i < tab_size)
   {
-    if (philo_tab[i].index % 2)
+    if (philo_tab[i].index % 2 == 1)
     {
       if (pthread_create(&philo_tab[i].philo_id, NULL, odd_routine, &philo_tab[i]))
         return (1);
@@ -61,53 +60,50 @@ bool  launcher(t_philo *philo_tab, int tab_size)
 
 int	main(int argc, char **argv)
 {
-  int		          tab_arg[5];
-  t_philo         *philo_tab;
-  pthread_mutex_t ready_isdead_mutex[2];
-  bool            is_dead;
-  bool            ready;
+  t_philo   *philo_tab;
+  t_main_th th_master;
 
   if (argc != 5 && argc != 6)
-    return (print_error("Nb of arguments is invalid\n"), 0);
-  if (parsing(argc, argv, tab_arg)) // init last arg
-    return (0);
+    return (print_error("Nb of arguments is invalid\n"), 1);
+  if (check_args(argc, argv, th_master.tab_arg)) // have to init last arg
+    return (2);
 
   // INIT MAIN THREAD FUNCTION
-  ready = 0;
-  is_dead = 0;
-  pthread_mutex_init(&ready_isdead_mutex[0], NULL);
-  pthread_mutex_init(&ready_isdead_mutex[1], NULL);
+  th_master.ready = 0;
+  th_master.is_dead = 0;
+  pthread_mutex_init(&th_master.ready_mutex, NULL);
+  pthread_mutex_init(&th_master.isdead_mutex, NULL);
   // INIT MAIN THREAD FUNCTION
 
   if (argc == 5)
   {
-    philo_tab = socrate_maker(&tab_arg, &ready, &is_dead, ready_isdead_mutex);
+    philo_tab = socrate_maker(&th_master);
     if (!philo_tab)
-        return (0);
-    if (launcher(philo_tab, tab_arg[0]))
-        return (free_all(philo_tab, tab_arg[0]), 0);
+        return (3);
+    if (launcher(philo_tab, th_master.tab_arg[0]))
+        return (free_all(philo_tab, th_master.tab_arg[0]), 4);
 
 
   // MAIN THREAD ROUTINE FUNCTION
-    pthread_mutex_lock(&ready_isdead_mutex[0]);
-    ready = 1;
-    pthread_mutex_unlock(&ready_isdead_mutex[0]); 
+    pthread_mutex_lock(&th_master.ready_mutex);
+    th_master.ready = 1;
+    pthread_mutex_unlock(&th_master.ready_mutex);
     while (1)
     {
-      pthread_mutex_lock(&ready_isdead_mutex[1]);
-      if (is_dead)
+      pthread_mutex_lock(&th_master.isdead_mutex);
+      if (th_master.is_dead)
       {
-        pthread_mutex_unlock(&ready_isdead_mutex[1]);
+        pthread_mutex_unlock(&th_master.isdead_mutex);
         break;
       }
-      pthread_mutex_unlock(&ready_isdead_mutex[1]);
+      pthread_mutex_unlock(&th_master.isdead_mutex);
     }
   // MAIN THREAD ROUTINE FUNCTION
 
 
 
     usleep(5000);
-    free_all(philo_tab, tab_arg[0]);
+    free_all(philo_tab, th_master.tab_arg[0]);
   }
   return (0);
 }

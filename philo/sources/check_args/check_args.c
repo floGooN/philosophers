@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
+/*   check_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 13:46:59 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/04 17:50:13 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/09 16:52:25 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static bool ft_isdigit(char *arg)
 	return (0);
 }
 
-int	parsing(int argc, char **argv, int *tab_arg)
+int	check_args(int argc, char **argv, int *tab_arg)
 {
 	size_t		i_argv;
 	short		  i_tab_arg;

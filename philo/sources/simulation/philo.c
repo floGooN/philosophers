@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/16 19:44:42 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/09 17:58:55 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 bool      eat_act(t_philo *philo);
 bool      sleep_act(t_philo *philo);
 bool      think_act(void *arg);
-long int  get_time(void);
+time_t    get_time(void);
 bool      check_death(t_philo *philo);
 
 static void wait_loop(t_philo *philo)
@@ -28,10 +28,10 @@ static void wait_loop(t_philo *philo)
   while (1)
   {
     pthread_mutex_lock(philo->ready_mutex);
-    if (READY_PTR)
+    if (*(philo->ready) == 1)
     {
       pthread_mutex_unlock(philo->ready_mutex);
-      break;
+      return;
     }
     pthread_mutex_unlock(philo->ready_mutex);
   }
@@ -46,7 +46,6 @@ void  *odd_routine(void *arg)
   philo->start_time = get_time();
   while (1)
   {
-    usleep(50);
     if (pthread_mutex_lock(philo->print_mutex))
       return (print_error ("error -> failure to take print_mutex\n"), NULL);
     printf("ODD philo %d\n", philo->index);

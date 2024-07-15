@@ -6,7 +6,7 @@
 #    By: florian <florian@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 09:47:22 by fberthou          #+#    #+#              #
-#    Updated: 2024/05/04 16:33:48 by florian          ###   ########.fr        #
+#    Updated: 2024/07/09 16:46:51 by florian          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,25 +23,23 @@ NAME		= philo
 HDR_PATH				= headers
 SRC_PATH				= sources
 MAIN_PATH				= $(SRC_PATH)/main
-PARSING_PATH			= $(SRC_PATH)/parsing
+CHECK_ARGS_PATH			= $(SRC_PATH)/check_args
 INIT_PATH				= $(SRC_PATH)/init
 SIMULATION_PATH			= $(SRC_PATH)/simulation
 
 #TEMPORARY FILES#
 BUILD_PATH				= .build
 BUILD_MAIN_PATH			= $(BUILD_PATH)/main
-BUILD_PARS_PATH			= $(BUILD_PATH)/parsing
+BUILD_CHECK_PATH		= $(BUILD_PATH)/check_args
 BUILD_INIT_PATH			= $(BUILD_PATH)/init
 BUILD_SIMULATION_PATH	= $(BUILD_PATH)/simulation
 
 # --- COMPILATION FLAGS --- #
 COMPFLAGS	=	-g #-Wall -Wextra -Werror
 
-SRC		=	$(MAIN_PATH)/main.c $(MAIN_PATH)/utils.c \
+SRC		=	$(MAIN_PATH)/main.c $(MAIN_PATH)/utils.c $(MAIN_PATH)/init.c \
 			\
-			$(PARSING_PATH)/parsing.c $(PARSING_PATH)/parsing_utils.c \
-			\
-			$(INIT_PATH)/init.c \
+			$(CHECK_ARGS_PATH)/check_args.c $(CHECK_ARGS_PATH)/check_utils.c \
 			\
 			$(SIMULATION_PATH)/philo.c $(SIMULATION_PATH)/simu_utils.c $(SIMULATION_PATH)/actions.c
 
@@ -59,7 +57,7 @@ $(NAME)	: $(OBJ)
 
 #######     OBJECTS    #######
 $(BUILD_PATH)/%.o : $(SRC_PATH)/%.c
-	@mkdir -p $(BUILD_PATH) $(BUILD_PARS_PATH) $(BUILD_MAIN_PATH) $(BUILD_INIT_PATH) $(BUILD_SIMULATION_PATH)
+	@mkdir -p $(BUILD_PATH) $(BUILD_CHECK_PATH) $(BUILD_MAIN_PATH) $(BUILD_INIT_PATH) $(BUILD_SIMULATION_PATH)
 	$(CC) $(COMPFLAGS) -I$(HDR_PATH) -c $< -o $@
 
 ### --- CLEAN MANAGEMENT --- ###

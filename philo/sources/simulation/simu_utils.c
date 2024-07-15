@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   simu_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/05/16 10:57:55 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/09 17:56:30 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ bool  check_death(t_philo *philo)
     return (0);
 }
 
-long int  get_time(void)
+time_t  get_time(void)
 {
 	struct timeval	tv;
-	
+
 	if (gettimeofday(&tv, NULL))
 		return (print_error("gettimeofday() FAILURE\n"), -1);
-	return ((long) (tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
 int	ft_usleep(int time)
@@ -72,7 +72,7 @@ bool  print_message(t_philo *philo, int action)
     return (print_error ("error -> failure to take print_mutex\n"));
   if (check_death(philo))
     return (pthread_mutex_unlock(philo->print_mutex), 1);
-  
+
   // PRINT FUNCTION
   if (action == 0)
     printf("%ld %d has taken a fork\n", curr_time, philo->index);
@@ -87,10 +87,10 @@ bool  print_message(t_philo *philo, int action)
     if (change_death_status(philo))
       return (pthread_mutex_unlock(philo->print_mutex), 1);
     printf("%ld %d died\n", curr_time, philo->index);
-    return (pthread_mutex_unlock(philo->print_mutex), 1);  
+    return (pthread_mutex_unlock(philo->print_mutex), 1);
   }
   // PRINT FUNCTION
-  
+
   if (pthread_mutex_unlock(philo->print_mutex))
     return (print_error("error -> failure to drop print_mutex\n"), 1);
   return (0);
