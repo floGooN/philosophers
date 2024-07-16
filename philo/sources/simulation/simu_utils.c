@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/16 12:44:04 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/16 14:04:54 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,6 @@ void    ft_usleep(long time)
         usleep(time / 10);
 }
 
-// void  update_time_death(t_philo *philo, long int time1)
-// {
-// }
-
 /*
   * take an instance of philo_tab and a code action as parameter
   * print the message associate with the right ation
@@ -66,17 +62,21 @@ bool  print_message(t_philo *philo, int action)
 {
     long int  curr_time;
     long int  time1;
+    long int  time2;
 
     time1 = get_time();
+
     if (pthread_mutex_lock(philo->shared_mtx.print_mtx))
       return (print_error("error -> failure to take print_mutex\n"), 1);
     if (check_death(philo))
       return (pthread_mutex_unlock(philo->shared_mtx.print_mtx), 1);
+
     curr_time = time1 - philo->time_data.start_time;
-    philo->time_data.time_to_die -= get_time() - time1;
+    time2 = get_time();
+    philo->time_data.time_to_die -= time2 - time1;
 
     if (philo->time_data.time_to_die <= 0)
-      action = 3;
+      action = 4;
     // PRINT FUNCTION
     if (action == 0)
       printf("%ld %d has taken a fork\n", curr_time, philo->index);

@@ -6,11 +6,10 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 15:20:21 by florian           #+#    #+#             */
-/*   Updated: 2024/07/16 12:01:52 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/16 14:03:50 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <struct.h>
 #include <philo.h>
 
 bool  take_forks(t_philo *philo)
@@ -63,11 +62,11 @@ bool  take_forks(t_philo *philo)
 
 bool  drop_forks(t_philo *philo)
 {
+    philo->right_fork = 1;
+    *(philo->left_fork) = 1;
     if (pthread_mutex_unlock(philo->shared_mtx.right_fork) || \
         pthread_mutex_unlock(philo->shared_mtx.left_fork))
         return (1);
-    philo->right_fork = 1;
-    *(philo->left_fork) = 1;
     return (0);
 }
 
