@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/15 19:50:23 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/16 10:29:09 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <struct.h>
 #include <philo.h>
 
 static int preapare_init(pthread_mutex_t **forks_mtx, \
@@ -25,12 +24,12 @@ static int preapare_init(pthread_mutex_t **forks_mtx, \
     *print_mtx = malloc (sizeof(pthread_mutex_t));
     if (!print_mtx)
         return (free(*forks_mtx), print_error("error -> init_mtx\n"), -1);
+    pthread_mutex_init(*print_mtx, NULL);
     while (i < nb_philo)
     {
-        pthread_mutex_init(forks_mtx[i], NULL);
+        pthread_mutex_init(&(forks_mtx[0][i]), NULL);
         i++;
     }
-    pthread_mutex_init(*print_mtx, NULL);
     return (0);
 }
 
@@ -42,7 +41,7 @@ static t_philo *init_mtx(t_philo *philo_tab, t_main_th *main_th, int nb_philo)
 
     i = 0;
     if (preapare_init(&forks_mtx, &print, nb_philo) == -1)
-        return (NULL);
+        return (free(philo_tab), NULL);
     while (i < nb_philo)
     {
         philo_tab[i].shared_mtx.print_mtx = print;
@@ -53,6 +52,7 @@ static t_philo *init_mtx(t_philo *philo_tab, t_main_th *main_th, int nb_philo)
             philo_tab[i].shared_mtx.left_fork = &forks_mtx[0];
         else
             philo_tab[i].shared_mtx.left_fork = &forks_mtx[i + 1];
+        i++;
     }
     return (philo_tab);
 }
@@ -71,27 +71,31 @@ static void    init_time(t_time *time_data, int tab_arg[], bool nb_meal)
 
 t_philo	*socrate_maker(t_main_th *main_th, int tab_arg[], bool nb_meal)
 {
-    t_philo *tab;
+    t_philo *philo_tab;
+    int     nb_philo;
     int     i;
 
     i = 0;
-    tab = ft_calloc(tab_arg[0], sizeof(t_philo));
-    if (!tab)
+    nb_philo = tab_arg[0];
+    philo_tab = ft_calloc(nb_philo, sizeof(t_philo));
+    if (!philo_tab)
         return (print_error("error -> init tab_philo"), NULL);
-    while (i < tab_arg[0])
+    while (i < nb_philo)
     {
-        tab[i].index = i + 1;
-        tab[i].ready = &(main_th->ready);
-        tab[i].is_dead = &(main_th->is_dead);
-        tab[i].right_fork = 1;
-        if (i == tab_arg[0] - 1)
-            tab->left_fork = &tab[0].right_fork;
+        philo_tab[i].index = i + 1;
+        philo_tab[i].ready = &(main_th->ready);
+        philo_tab[i].is_dead = &(main_th->is_dead);
+        philo_tab[i].right_fork = 1;
+        // printf("right_fork i add == %p\nright fork i+1 == %p\n", &philo_tab[i].right_fork, &(philo_tab[i + 1].right_fork));
+        if (i == nb_philo - 1)
+            philo_tab[i].left_fork = &(philo_tab[0].right_fork);
         else
-            tab->left_fork = &tab[i + 1].right_fork;
-        init_time(&tab[i].time_data, tab_arg, nb_meal);
+            philo_tab[i].left_fork = &(philo_tab[i + 1].right_fork);
+        // printf("i === %d\nright fork == %p\nleft fork = %p\n\n", i, &philo_tab[i].right_fork, philo_tab[i].left_fork);
+        init_time(&philo_tab[i].time_data, tab_arg, nb_meal);
         i++;
     }
-    return (init_mtx(tab, main_th, tab_arg[0]));
+    return (init_mtx(philo_tab, main_th, nb_philo));
 }
 
 void  init_main_thread(t_main_th *main_th)

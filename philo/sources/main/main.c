@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/15 19:53:10 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/16 10:34:26 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static bool launcher(t_philo *philo_tab, int tab_size)
   i = 0;
   while (i < tab_size)
   {
-    if (philo_tab[i].index % 2 == 1)
+    if (philo_tab[i].index % 2)
     {
       if (pthread_create(&philo_tab[i].philo_id, NULL, odd_routine, &philo_tab[i]))
         return (1);

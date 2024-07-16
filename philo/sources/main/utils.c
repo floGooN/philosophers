@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/15 16:48:11 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/16 08:56:14 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <struct.h>
 #include <philo.h>
 
 size_t	ft_strlen(const char *str)
@@ -52,13 +51,13 @@ void  free_all(t_philo *philo_tab, int tab_size)
   i = 0;
   if (philo_tab && tab_size > 0)
   {
-	pthread_mutex_destroy(philo_tab[i].print_mutex);
-	pthread_mutex_destroy(philo_tab[i].ready_mutex);
-	pthread_mutex_destroy(philo_tab[i].isdead_mutex);
-	free(philo_tab[i].print_mutex);
+	pthread_mutex_destroy(philo_tab[i].shared_mtx.print_mtx);
+	pthread_mutex_destroy(philo_tab[i].shared_mtx.ready_mtx);
+	pthread_mutex_destroy(philo_tab[i].shared_mtx.isdead_mtx);
+	free(philo_tab[i].shared_mtx.print_mtx);
     while (i < tab_size)
     {
-		pthread_mutex_destroy(&(philo_tab[i].fork_mutex));
+		pthread_mutex_destroy(philo_tab[i].shared_mtx.right_fork);
 		i++;
     }
     free(philo_tab);
