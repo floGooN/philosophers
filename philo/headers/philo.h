@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 14:54:39 by florian           #+#    #+#             */
-/*   Updated: 2024/07/17 08:57:59 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/17 13:12:57 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,10 @@
 # include <struct.h>
 
 //  ==== main/utils.c ====  //
-int			print_error(const char *str);
+int			ft_perror(const char *str);
 void		*ft_calloc(size_t nmemb, size_t size);
 void		free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th);
+void		stop_simu(t_philo *philo_tab, int tab_size, t_main_th *main_th);
 
 //  ==== check_args/check_args.c ====  //
 int			check_args(int argc, char **argv, int *tab_arg);
@@ -52,6 +53,7 @@ bool		change_death_status(t_philo *philo);
 void		ft_usleep(long time);
 long int	get_time(void);
 bool		check_death(t_philo *philo);
+int			update_time(t_philo *philo, long int time);
 
 //  ==== simulaation/print.c ====  //
 bool		print_message(t_philo *philo, int action);

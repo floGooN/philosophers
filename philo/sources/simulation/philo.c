@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/17 08:53:15 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/17 12:09:48 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,20 @@ void  *odd_routine(void *arg)
     philo = (t_philo *) arg;
     wait_loop(philo);
     philo->time_data.start_time = get_time();
+    if (philo->time_data.start_time < 0)
+      return (NULL);
     while (!check_death(philo))
     {
         if (think_act(philo))
-          return (NULL);
+          break ;
         if (check_death(philo) || eat_act(philo))
-          return (NULL);
+          break ;
         // if (philo->nb_meal == 0)
-        //   return (NULL);
+        //   break ;
         if (check_death(philo) || sleep_act(philo))
-          return (NULL);
+          break ;
     }
+    // check if is dead else is_dead == 1
     return (NULL);
 }
 
@@ -55,16 +58,19 @@ void  *even_routine(void *arg)
     philo = (t_philo *) arg;
     wait_loop(philo);
     philo->time_data.start_time = get_time();
+    if (philo->time_data.start_time < 0)
+      return (NULL);
     while (!check_death(philo))
     {
       if (sleep_act(philo))
-        return (NULL);
+        break ;
       if (check_death(philo) || think_act(philo))
-        return (NULL);
+        break ;
       if (check_death(philo) || eat_act(philo))
-        return (NULL);
+        break ;
       // if (philo->nb_meal == 0)
-      //   return (NULL);
+      //   break ;
     }
+    // check if is dead else is_dead == 1
     return (NULL);
 }

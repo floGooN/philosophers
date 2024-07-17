@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/17 08:44:43 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/17 11:09:18 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ static int preapare_init(pthread_mutex_t **forks_mtx, \
     i = 0;
     *forks_mtx = malloc(sizeof(pthread_mutex_t) * nb_philo);
     if (!*forks_mtx)
-        return (print_error("error -> init_mtx\n"), -1);
+        return (ft_perror("error -> init_mtx\n"), -1);
     *print_mtx = malloc (sizeof(pthread_mutex_t));
     if (!print_mtx)
-        return (free(*forks_mtx), print_error("error -> init_mtx\n"), -1);
+        return (free(*forks_mtx), ft_perror("error -> init_mtx\n"), -1);
     pthread_mutex_init(*print_mtx, NULL);
     while (i < nb_philo)
     {
@@ -81,7 +81,7 @@ t_philo	*socrate_maker(t_main_th *main_th, int tab_arg[], bool nb_meal)
     nb_philo = tab_arg[0];
     philo_tab = ft_calloc(nb_philo, sizeof(t_philo));
     if (!philo_tab)
-        return (print_error("error -> init tab_philo"), NULL);
+        return (ft_perror("error -> init tab_philo"), NULL);
     while (i < nb_philo)
     {
         philo_tab[i].index = i + 1;

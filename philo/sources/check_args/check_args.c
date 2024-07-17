@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 13:46:59 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/15 15:12:37 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/17 11:09:38 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,16 @@ int	check_args(int argc, char **argv, int *tab_arg)
 	while (i_argv < argc)
 	{
 		if (ft_isdigit(argv[i_argv]))
-			return (print_error("Error -> Arguments must be numbers\n"));
+			return (ft_perror("Error -> Arguments must be numbers\n"));
 		tmp = ft_atoi(argv[i_argv]);
 		if (i_tab_arg == 4)
 		{
 			if (tmp < 0 || tmp > INT_MAX)
-				return (print_error("Error -> last arg invalid\n"));
+				return (ft_perror("Error -> last arg invalid\n"));
 		}
 		else
 			if (tmp < 0 || tmp > INT_MAX)
-				return (print_error("Error -> an argument is invalid\n"));
+				return (ft_perror("Error -> an argument is invalid\n"));
 		tab_arg[i_tab_arg] = (int) tmp;
 		i_argv++;
 		i_tab_arg++;
