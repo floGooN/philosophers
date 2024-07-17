@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/15 19:44:16 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/17 08:45:07 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ typedef struct s_philo
     bool            *ready;
     bool            *is_dead;
     bool            right_fork;
-
     bool            *left_fork;
     t_time          time_data;
     t_shared_mtx    shared_mtx;
@@ -54,6 +53,9 @@ typedef struct s_main_th
     bool            is_dead;
     pthread_mutex_t ready_mutex;
     pthread_mutex_t isdead_mutex;
+    pthread_mutex_t *print;
+    pthread_mutex_t *all_forks;
+
 } t_main_th;
 
 #endif

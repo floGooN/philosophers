@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/16 10:29:09 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/17 08:44:43 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ static t_philo *init_mtx(t_philo *philo_tab, t_main_th *main_th, int nb_philo)
             philo_tab[i].shared_mtx.left_fork = &forks_mtx[i + 1];
         i++;
     }
+    main_th->print = print;
+    main_th->all_forks = forks_mtx;
     return (philo_tab);
 }
 
@@ -86,12 +88,10 @@ t_philo	*socrate_maker(t_main_th *main_th, int tab_arg[], bool nb_meal)
         philo_tab[i].ready = &(main_th->ready);
         philo_tab[i].is_dead = &(main_th->is_dead);
         philo_tab[i].right_fork = 1;
-        // printf("right_fork i add == %p\nright fork i+1 == %p\n", &philo_tab[i].right_fork, &(philo_tab[i + 1].right_fork));
         if (i == nb_philo - 1)
             philo_tab[i].left_fork = &(philo_tab[0].right_fork);
         else
             philo_tab[i].left_fork = &(philo_tab[i + 1].right_fork);
-        // printf("i === %d\nright fork == %p\nleft fork = %p\n\n", i, &philo_tab[i].right_fork, philo_tab[i].left_fork);
         init_time(&philo_tab[i].time_data, tab_arg, nb_meal);
         i++;
     }

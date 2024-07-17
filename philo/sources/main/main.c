@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/16 10:34:26 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/17 08:49:14 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,20 +36,34 @@ static bool launcher(t_philo *philo_tab, int tab_size)
 
 static int main_routine(t_main_th *main_th)
 {
-    pthread_mutex_lock(&main_th->ready_mutex);
+    if (pthread_mutex_lock(&main_th->ready_mutex))
+      return (1);
     main_th->ready = 1;
-    pthread_mutex_unlock(&main_th->ready_mutex);
+    if (pthread_mutex_unlock(&main_th->ready_mutex))
+      return (1);
     while (1)
     {
-      pthread_mutex_lock(&main_th->isdead_mutex);
+      if (pthread_mutex_lock(&main_th->isdead_mutex))
+        return (1);
       if (main_th->is_dead)
       {
-        pthread_mutex_unlock(&main_th->isdead_mutex);
+        if (pthread_mutex_unlock(&main_th->isdead_mutex))
+          return (1);
         break;
       }
-      pthread_mutex_unlock(&main_th->isdead_mutex);
+      if (pthread_mutex_unlock(&main_th->isdead_mutex))
+        return (1);
     }
     return (0);
+}
+
+void  stop_simu(t_philo *philo_tab, int tab_size, t_main_th *main_th)
+{
+    if (pthread_mutex_lock(&main_th->isdead_mutex))
+      return (free_all(philo_tab, tab_size, main_th));
+    main_th->is_dead = 1;
+    pthread_mutex_unlock(&main_th->isdead_mutex);
+    free_all(philo_tab, tab_size, main_th);
 }
 
 int	main(int argc, char **argv)
@@ -70,10 +84,10 @@ int	main(int argc, char **argv)
     if (!philo_tab)
         return (3);
     if (launcher(philo_tab, tab_arg[0]))
-        return (free_all(philo_tab, tab_arg[0]), 4);
+        return (free_all(philo_tab, tab_arg[0], &main_th), 4);
     if (main_routine(&main_th))
-        return (5);
+        return (stop_simu(philo_tab, tab_arg[0], &main_th), 5);
     usleep(5000);
-    free_all(philo_tab, tab_arg[0]);
+    free_all(philo_tab, tab_arg[0], &main_th);
     return (0);
 }

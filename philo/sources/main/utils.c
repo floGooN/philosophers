@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/16 08:56:14 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/17 08:45:56 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void    *ft_calloc(size_t nmemb, size_t size)
 	return (new_mem_place);
 }
 
-void  free_all(t_philo *philo_tab, int tab_size)
+void  free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 {
   int  i;
 
@@ -54,12 +54,13 @@ void  free_all(t_philo *philo_tab, int tab_size)
 	pthread_mutex_destroy(philo_tab[i].shared_mtx.print_mtx);
 	pthread_mutex_destroy(philo_tab[i].shared_mtx.ready_mtx);
 	pthread_mutex_destroy(philo_tab[i].shared_mtx.isdead_mtx);
-	free(philo_tab[i].shared_mtx.print_mtx);
     while (i < tab_size)
     {
 		pthread_mutex_destroy(philo_tab[i].shared_mtx.right_fork);
 		i++;
     }
+	// free(philo_tab[0].shared_mtx.all_forks);
+	// free(philo_tab[0].shared_mtx.print_mtx);
     free(philo_tab);
   }
 }
