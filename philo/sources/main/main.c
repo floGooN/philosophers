@@ -6,13 +6,14 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/16 10:34:26 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/17 12:11:40 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-static bool launcher(t_philo *philo_tab, int tab_size)
+
+static bool launcher(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 {
   int  i;
 
@@ -22,12 +23,18 @@ static bool launcher(t_philo *philo_tab, int tab_size)
     if (philo_tab[i].index % 2)
     {
       if (pthread_create(&philo_tab[i].philo_id, NULL, odd_routine, &philo_tab[i]))
-        return (1);
+      {
+        stop_simu(philo_tab, i + 1, main_th);
+        return (ft_perror("error -> launch thread"), 1);
+      }
     }
     else
     {
       if (pthread_create(&philo_tab[i].philo_id, NULL, even_routine, &philo_tab[i]))
-        return (1);
+      {
+        stop_simu(philo_tab, i + 1, main_th);
+        return (ft_perror("error -> launch thread"), 1);
+      }
     }
     i++;
   }
@@ -36,18 +43,23 @@ static bool launcher(t_philo *philo_tab, int tab_size)
 
 static int main_routine(t_main_th *main_th)
 {
-    pthread_mutex_lock(&main_th->ready_mutex);
+    if (pthread_mutex_lock(&main_th->ready_mutex))
+      return (ft_perror("error -> lock ready_mtx"), 1);
     main_th->ready = 1;
-    pthread_mutex_unlock(&main_th->ready_mutex);
+    if (pthread_mutex_unlock(&main_th->ready_mutex))
+      return (ft_perror("error -> unlock ready_mtx"), 1);
     while (1)
     {
-      pthread_mutex_lock(&main_th->isdead_mutex);
+      if (pthread_mutex_lock(&main_th->isdead_mutex))
+        return (ft_perror("error -> lock ready_mtx"), 1);
       if (main_th->is_dead)
       {
-        pthread_mutex_unlock(&main_th->isdead_mutex);
+        if (pthread_mutex_unlock(&main_th->isdead_mutex))
+          return (ft_perror("error -> unlock ready_mtx"), 1);
         break;
       }
-      pthread_mutex_unlock(&main_th->isdead_mutex);
+      if (pthread_mutex_unlock(&main_th->isdead_mutex))
+        return (ft_perror("error -> unlock ready_mtx"), 1);
     }
     return (0);
 }
@@ -59,7 +71,7 @@ int	main(int argc, char **argv)
     t_main_th   main_th;
 
     if (argc != 5 && argc != 6)
-        return (print_error("Nb of arguments is invalid\n"), 1);
+        return (ft_perror("Nb of arguments is invalid\n"), 1);
     if (check_args(argc, argv, tab_arg))
         return (2);
     init_main_thread(&main_th);
@@ -69,11 +81,10 @@ int	main(int argc, char **argv)
         philo_tab = socrate_maker(&main_th, tab_arg, 1);
     if (!philo_tab)
         return (3);
-    if (launcher(philo_tab, tab_arg[0]))
-        return (free_all(philo_tab, tab_arg[0]), 4);
+    if (launcher(philo_tab, tab_arg[0], &main_th))
+        return (4);
     if (main_routine(&main_th))
-        return (5);
-    usleep(5000);
-    free_all(philo_tab, tab_arg[0]);
+        return (stop_simu(philo_tab, tab_arg[0], &main_th), 5);
+    free_all(philo_tab, tab_arg[0], &main_th);
     return (0);
 }

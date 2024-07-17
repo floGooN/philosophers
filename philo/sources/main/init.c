@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/16 19:15:16 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/17 15:50:59 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,10 @@ static int preapare_init(pthread_mutex_t **forks_mtx, \
     i = 0;
     *forks_mtx = malloc(sizeof(pthread_mutex_t) * nb_philo);
     if (!*forks_mtx)
-        return (print_error("error -> init_mtx\n"), -1);
+        return (ft_perror("error -> init_mtx\n"), -1);
     *print_mtx = malloc (sizeof(pthread_mutex_t));
     if (!print_mtx)
-        return (free(*forks_mtx), print_error("error -> init_mtx\n"), -1);
-    *print_watch = malloc (sizeof(pthread_mutex_t));
-    if (!print_watch)
-        return (free(*forks_mtx), free(print_mtx), \
-                print_error("error -> init_mtx\n"), -1);
+        return (free(*forks_mtx), ft_perror("error -> init_mtx\n"), -1);
     pthread_mutex_init(*print_mtx, NULL);
     pthread_mutex_init(*print_watch, NULL);
     while (i < nb_philo)
@@ -62,6 +58,8 @@ static t_philo *init_mtx(t_philo *philo_tab, t_main_th *main_th, int nb_philo)
             philo_tab[i].shared_mtx.left_fork = &forks_mtx[i + 1];
         i++;
     }
+    main_th->print = print;
+    main_th->all_forks = forks_mtx;
     return (philo_tab);
 }
 
@@ -87,7 +85,7 @@ t_philo	*socrate_maker(t_main_th *main_th, int tab_arg[], bool nb_meal)
     nb_philo = tab_arg[0];
     philo_tab = ft_calloc(nb_philo, sizeof(t_philo));
     if (!philo_tab)
-        return (print_error("error -> init tab_philo"), NULL);
+        return (ft_perror("error -> init tab_philo"), NULL);
     while (i < nb_philo)
     {
         philo_tab[i].index = i + 1;

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: florian <florian@student.42.fr>            +#+  +:+       +#+         #
+#    By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 09:47:22 by fberthou          #+#    #+#              #
-#    Updated: 2024/07/09 16:46:51 by florian          ###   ########.fr        #
+#    Updated: 2024/07/17 08:54:54 by fberthou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,13 +35,14 @@ BUILD_INIT_PATH			= $(BUILD_PATH)/init
 BUILD_SIMULATION_PATH	= $(BUILD_PATH)/simulation
 
 # --- COMPILATION FLAGS --- #
-COMPFLAGS	=	-g #-Wall -Wextra -Werror
+COMPFLAGS	=	-g #-fsanitize=thread #-Wall -Wextra -Werror
 
 SRC		=	$(MAIN_PATH)/main.c $(MAIN_PATH)/utils.c $(MAIN_PATH)/init.c \
 			\
 			$(CHECK_ARGS_PATH)/check_args.c $(CHECK_ARGS_PATH)/check_utils.c \
 			\
-			$(SIMULATION_PATH)/philo.c $(SIMULATION_PATH)/simu_utils.c $(SIMULATION_PATH)/actions.c
+			$(SIMULATION_PATH)/philo.c $(SIMULATION_PATH)/simu_utils.c $(SIMULATION_PATH)/actions.c \
+			$(SIMULATION_PATH)/print.c
 
 ### ---- TEMPORARY FILES ---- ###
 OBJ	= $(SRC:$(SRC_PATH)/%.c=$(BUILD_PATH)/%.o)

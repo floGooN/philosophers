@@ -6,15 +6,29 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/07/16 19:14:26 by florian          ###   ########.fr       */
+=======
+/*   Updated: 2024/07/17 13:36:45 by fberthou         ###   ########.fr       */
+>>>>>>> a6af923d48cb30479952bc2ba776f7c278a3d371
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
+<<<<<<< HEAD
 /*
     * check if ANOTHER philo is dead
 */
+=======
+bool  change_death_status(t_philo *philo)
+{
+  pthread_mutex_lock(philo->shared_mtx.isdead_mtx);
+    *(philo->is_dead) = 1;
+  return (pthread_mutex_unlock(philo->shared_mtx.isdead_mtx), 0);
+}
+
+>>>>>>> a6af923d48cb30479952bc2ba776f7c278a3d371
 bool  check_death(t_philo *philo)
 {
     pthread_mutex_lock(philo->shared_mtx.isdead_mtx);
@@ -23,10 +37,10 @@ bool  check_death(t_philo *philo)
       pthread_mutex_unlock(philo->shared_mtx.isdead_mtx);
       return (1);
     }
-    pthread_mutex_unlock(philo->shared_mtx.isdead_mtx);
-    return (0);
+    return (pthread_mutex_unlock(philo->shared_mtx.isdead_mtx));
 }
 
+<<<<<<< HEAD
 /*
     *
 */
@@ -39,12 +53,20 @@ static bool  change_death_status(t_philo *philo)
 
 
 long int    get_time(void)
+=======
+long int  get_time(void)
+>>>>>>> a6af923d48cb30479952bc2ba776f7c278a3d371
 {
 	struct timeval	tv;
 
 	if (gettimeofday(&tv, NULL))
+<<<<<<< HEAD
 		return (print_error("gettimeofday() FAILURE\n"), -1);
 	return ((long int) (tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+=======
+		return (ft_perror("gettimeofday() FAILURE\n"), -1);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+>>>>>>> a6af923d48cb30479952bc2ba776f7c278a3d371
 }
 
 void    ft_usleep(long int time)
@@ -55,6 +77,7 @@ void    ft_usleep(long int time)
         usleep(time / 10);
 }
 
+<<<<<<< HEAD
 int    wait_for_print(t_philo *philo)
 {
     while (!check_death(philo))
@@ -129,3 +152,23 @@ bool  print_message(t_philo *philo, int action)
     // PRINT FUNCTION
     return (drop_print_mutex(philo));
 }
+=======
+int			update_time(t_philo *philo, long int time)
+{
+    long int  curr_time;
+
+    curr_time = get_time();
+    if (curr_time == -1)
+        return (1);
+    philo->time_data.time_to_die -= curr_time - time;
+    if (philo->time_data.time_to_die < 0)
+    {
+        if (change_death_status(philo))
+            return (1);
+        if (print_message(philo, 4))
+            return (1);
+        return (1);
+    }
+    return (0);
+}
+>>>>>>> a6af923d48cb30479952bc2ba776f7c278a3d371
