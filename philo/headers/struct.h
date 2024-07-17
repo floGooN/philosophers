@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/17 15:50:30 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/17 17:30:30 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,17 @@
 
 typedef struct s_time
 {
-    long int  start_time;
-    long int  time_to_die;
-    long int  time_to_eat;
-    long int  time_to_sleep;
-    int       nb_meal;
-	int       *args;
+    long int    start_time;
+    long int    death_time;
+    long int    last_time;
+    long int    time_to_die;
+    long int    time_to_eat;
+    long int    time_to_sleep;
+    int         nb_meal;
 } t_time;
 
 typedef struct s_shared_mtx
 {
-    pthread_mutex_t *prt_mtx_watch;
     pthread_mutex_t *print_mtx;
     pthread_mutex_t *ready_mtx;
     pthread_mutex_t *isdead_mtx;
@@ -42,7 +42,6 @@ typedef struct s_philo
     int             index;
     bool            *ready;
     bool            *is_dead;
-    bool            *print;
     bool            right_fork;
     bool            *left_fork;
     t_time          time_data;
@@ -53,10 +52,8 @@ typedef struct s_main_th
 {
     bool            ready;
     bool            is_dead;
-    bool            print;
     pthread_mutex_t ready_mutex;
     pthread_mutex_t isdead_mutex;
-    pthread_mutex_t *print;
     pthread_mutex_t *all_forks;
 
 } t_main_th;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/17 12:01:57 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/17 18:52:38 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,25 @@ void    *ft_calloc(size_t nmemb, size_t size)
 	return (new_mem_place);
 }
 
-void  stop_simu(t_philo *philo_tab, int tab_size, t_main_th *main_th)
+int stop_simu(t_philo *philo_tab, t_main_th *main_th)
 {
-    pthread_mutex_lock(&main_th->isdead_mutex);
-    main_th->is_dead = 1;
-    pthread_mutex_unlock(&main_th->isdead_mutex);
-    free_all(philo_tab, tab_size, main_th);
+    if (main_th)
+    {
+        if (pthread_mutex_lock(&main_th->isdead_mutex))
+            return (ft_perror("error -> lock mtx (stop_simu)\n"), 1);
+        main_th->is_dead = 1;
+        if (pthread_mutex_unlock(&main_th->isdead_mutex))
+            return (ft_perror("error -> unlock mtx (stop_simu)\n"), 1);
+    }
+    else if (philo_tab)
+    {
+        if (pthread_mutex_lock(philo_tab->shared_mtx.isdead_mtx))
+            return (ft_perror("error -> lock mtx (stop_simu)\n"), 1);
+        *(philo_tab->is_dead) = 1;
+        if (pthread_mutex_unlock(philo_tab->shared_mtx.isdead_mtx))
+            return (ft_perror("error -> unlock mtx (stop_simu)\n"), 1);
+    }
+    return (0);
 }
 
 void  free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th)
@@ -64,18 +77,15 @@ void  free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 		i++;
 	}
 	i = 0;
-	if (philo_tab && tab_size > 0)
-	{
-		pthread_mutex_destroy(philo_tab[i].shared_mtx.print_mtx);
-		pthread_mutex_destroy(philo_tab[i].shared_mtx.ready_mtx);
-		pthread_mutex_destroy(philo_tab[i].shared_mtx.isdead_mtx);
-		while (i < tab_size)
-		{
-			pthread_mutex_destroy(philo_tab[i].shared_mtx.right_fork);
-			i++;
-		}
-		free(main_th->all_forks);
-		free(main_th->print);
-		free(philo_tab);
-	}
+    pthread_mutex_destroy(philo_tab[i].shared_mtx.print_mtx);
+    pthread_mutex_destroy(philo_tab[i].shared_mtx.ready_mtx);
+    pthread_mutex_destroy(philo_tab[i].shared_mtx.isdead_mtx);
+    free(philo_tab[i].shared_mtx.print_mtx);
+    while (i < tab_size)
+    {
+        pthread_mutex_destroy(philo_tab[i].shared_mtx.right_fork);
+        i++;
+    }
+    free(main_th->all_forks);
+    free(philo_tab);
 }

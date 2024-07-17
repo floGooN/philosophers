@@ -3,28 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/17 12:09:48 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/17 17:31:21 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <struct.h>
 #include <philo.h>
 
-static void wait_loop(t_philo *philo)
+static int  wait_loop(t_philo *philo)
 {
   while (1)
   {
-    pthread_mutex_lock(philo->shared_mtx.ready_mtx);
+    if (pthread_mutex_lock(philo->shared_mtx.ready_mtx))
+        return (ft_perror("error -> lock mtx (wait_loop)\n"), 1);
     if (*(philo->ready))
     {
-      	pthread_mutex_unlock(philo->shared_mtx.ready_mtx);
-      	return ;
+      	if (pthread_mutex_unlock(philo->shared_mtx.ready_mtx))
+            return (ft_perror("error -> unlock mtx (wait_loop)\n"), 1);
+      	return (0);
     }
-    pthread_mutex_unlock(philo->shared_mtx.ready_mtx);
+    if (pthread_mutex_unlock(philo->shared_mtx.ready_mtx))
+        return (ft_perror("error -> unlock mtx (wait_loop)\n"), 1);
   }
+  return (0);
 }
 
 void  *odd_routine(void *arg)
@@ -32,19 +36,21 @@ void  *odd_routine(void *arg)
     t_philo *philo;
 
     philo = (t_philo *) arg;
-    wait_loop(philo);
+    if (wait_loop(philo))
+        return (stop_simu(philo, NULL), NULL);
     philo->time_data.start_time = get_time();
     if (philo->time_data.start_time < 0)
-      return (NULL);
+      return (stop_simu(philo, NULL), NULL);
+    philo->time_data.last_time = philo->time_data.start_time;
     while (!check_death(philo))
     {
         if (think_act(philo))
           break ;
-        if (check_death(philo) || eat_act(philo))
+        if (eat_act(philo))
           break ;
         // if (philo->nb_meal == 0)
         //   break ;
-        if (check_death(philo) || sleep_act(philo))
+        if (sleep_act(philo))
           break ;
     }
     // check if is dead else is_dead == 1
@@ -56,17 +62,19 @@ void  *even_routine(void *arg)
     t_philo *philo;
 
     philo = (t_philo *) arg;
-    wait_loop(philo);
+    if (wait_loop(philo))
+        return (stop_simu(philo, NULL), NULL);
     philo->time_data.start_time = get_time();
     if (philo->time_data.start_time < 0)
-      return (NULL);
+      return (stop_simu(philo, NULL), NULL);
+    philo->time_data.last_time = philo->time_data.start_time;
     while (!check_death(philo))
     {
       if (sleep_act(philo))
         break ;
-      if (check_death(philo) || think_act(philo))
+      if (think_act(philo))
         break ;
-      if (check_death(philo) || eat_act(philo))
+      if (eat_act(philo))
         break ;
       // if (philo->nb_meal == 0)
       //   break ;
