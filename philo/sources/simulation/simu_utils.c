@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   simu_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/17 18:51:56 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/18 12:18:41 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,13 @@ void    ft_usleep(long int time)
 
 int update_time(t_philo *philo)
 {
-    long int  curr_time;
+    long int    curr_time;
 
     curr_time = get_time();
     if (curr_time == -1)
+        return (-1);
+    if (curr_time - philo->time_data.last_time >= philo->time_data.death_time)
         return (1);
-    philo->time_data.time_to_die -= curr_time - philo->time_data.last_time;
     philo->time_data.last_time = curr_time;
     return (0);
 }

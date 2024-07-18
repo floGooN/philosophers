@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/17 16:42:06 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/18 13:01:02 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 static int  say_ready(t_main_th *main_th)
 {
     if (pthread_mutex_lock(&main_th->ready_mutex))
-      return (ft_perror("error -> lock ready_mtx (main th)\n"), 1);
+      return (ft_perror("error -> lock ready_mtx (say ready)\n"), 1);
     main_th->ready = 1;
     if (pthread_mutex_unlock(&main_th->ready_mutex))
-      return (ft_perror("error -> unlock ready_mtx (main th)\n"), 1);
-
+      return (ft_perror("error -> unlock ready_mtx (say ready)\n"), 1);
+    return (0);
 }
 
 static int main_routine(t_main_th *main_th)
@@ -29,15 +29,16 @@ static int main_routine(t_main_th *main_th)
     while (1)
     {
       if (pthread_mutex_lock(&main_th->isdead_mutex))
-        return (ft_perror("error -> lock isdead_mtx (main th)\n"), 1);
+        return (ft_perror("error -> lock isdead_mtx (main_routine)\n"), 1);
       if (main_th->is_dead)
       {
         if (pthread_mutex_unlock(&main_th->isdead_mutex))
-          return (ft_perror("error -> unlock isdead_mtx (main th)\n"), 1);
+          return (ft_perror("error -> unlock isdead_mtx (main_routine)\n"), 1);
         break;
       }
       if (pthread_mutex_unlock(&main_th->isdead_mutex))
-        return (ft_perror("error -> unlock isdead_mtx (main th)\n"), 1);
+        return (ft_perror("error -> unlock isdead_mtx (main_routine)\n"), 1);
+      usleep(100);
     }
     return (0);
 }
@@ -55,7 +56,7 @@ static bool launcher(t_philo *philo_tab, int tab_size, t_main_th *main_th)
       {
         stop_simu(NULL, main_th);
         free_all(philo_tab, i + 1, main_th);
-        return (ft_perror("error -> launch thread"), 1);
+        return (ft_perror("error -> launcher"), 1);
       }
     }
     else
@@ -64,7 +65,7 @@ static bool launcher(t_philo *philo_tab, int tab_size, t_main_th *main_th)
       {
         stop_simu(NULL, main_th);
         free_all(philo_tab, i + 1, main_th);
-        return (ft_perror("error -> launch thread"), 1);
+        return (ft_perror("error -> launcher"), 1);
       }
     }
   }

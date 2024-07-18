@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 14:54:39 by florian           #+#    #+#             */
-/*   Updated: 2024/07/17 17:47:20 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/18 13:07:11 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ void		*even_routine(void *arg);
 long		ft_atoi(const char *nptr);
 
 //  ==== simulaation/actions.c ====  //
-bool		eat_act(t_philo *philo);
-bool		sleep_act(t_philo *philo);
-bool		think_act(void *arg);
+// bool		eat_act(t_philo *philo);
+// bool		sleep_act(t_philo *philo);
+// bool		think_act(t_philo *philo);
 
 //  ==== simulaation/simu_utils.c ====  //
 bool		change_death_status(t_philo *philo);
@@ -56,6 +56,6 @@ bool		check_death(t_philo *philo);
 int			update_time(t_philo *philo);
 
 //  ==== simulaation/print.c ====  //
-bool		print_message(t_philo *philo, int action);
+bool		print_message(char *msg, t_philo *philo, bool is_dead);
 
 #endif
