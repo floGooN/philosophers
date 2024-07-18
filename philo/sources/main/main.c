@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/18 13:01:02 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/18 18:00:53 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,31 +45,20 @@ static int main_routine(t_main_th *main_th)
 
 static bool launcher(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 {
-  int  i;
+    int  i;
 
-  i = -1;
-  while (++i < tab_size)
-  {
-    if (philo_tab[i].index % 2)
+    i = 0;
+    while (i < tab_size)
     {
-      if (pthread_create(&philo_tab[i].philo_id, NULL, odd_routine, &philo_tab[i]))
-      {
-        stop_simu(NULL, main_th);
-        free_all(philo_tab, i + 1, main_th);
-        return (ft_perror("error -> launcher"), 1);
-      }
+        if (pthread_create(&philo_tab[i].philo_id, NULL, routine, &philo_tab[i]))
+        {
+            stop_simu(NULL, main_th);
+            free_all(philo_tab, i + 1, main_th);
+            return (ft_perror("error -> launcher"), 1);
+        }
+        i++;
     }
-    else
-    {
-      if (pthread_create(&philo_tab[i].philo_id, NULL, even_routine, &philo_tab[i]))
-      {
-        stop_simu(NULL, main_th);
-        free_all(philo_tab, i + 1, main_th);
-        return (ft_perror("error -> launcher"), 1);
-      }
-    }
-  }
-  return (0);
+    return (0);
 }
 
 int	main(int argc, char **argv)
