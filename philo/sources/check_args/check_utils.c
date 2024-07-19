@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing_utils.c                                    :+:      :+:    :+:   */
+/*   check_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 11:00:33 by fberthou          #+#    #+#             */
-/*   Updated: 2024/04/28 09:58:31 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/19 17:36:50 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-/* ====	PROTOTYPES	==== */
+
 size_t	ft_strlen(const char *str);
-/* ====	PROTOTYPES	==== */
 
 static int	skip_spaces(const char *nptr)
 {

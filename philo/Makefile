@@ -6,7 +6,7 @@
 #    By: florian <florian@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 09:47:22 by fberthou          #+#    #+#              #
-#    Updated: 2024/07/19 15:17:22 by florian          ###   ########.fr        #
+#    Updated: 2024/07/19 17:31:58 by florian          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ BUILD_INIT_PATH			= $(BUILD_PATH)/init
 BUILD_SIMULATION_PATH	= $(BUILD_PATH)/simulation
 
 # --- COMPILATION FLAGS --- #
-COMPFLAGS	=	-g #-fsanitize=thread #-Wall -Wextra -Werror
+COMPFLAGS	=	-Wall -Wextra -Werror
 
 SRC		=	$(MAIN_PATH)/main.c $(MAIN_PATH)/utils.c $(MAIN_PATH)/init.c \
 			\

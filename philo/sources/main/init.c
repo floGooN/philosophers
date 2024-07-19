@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/17 16:32:56 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/19 17:00:59 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static t_philo *init_mtx(t_philo *philo_tab, t_main_th *main_th, int nb_philo)
     while (i < nb_philo)
     {
         philo_tab[i].shared_mtx.print_mtx = print;
+        philo_tab[i].shared_mtx.counter_mtx = &main_th->counter_mtx;
         philo_tab[i].shared_mtx.ready_mtx = &main_th->ready_mutex;
         philo_tab[i].shared_mtx.isdead_mtx = &main_th->isdead_mutex;
         philo_tab[i].shared_mtx.right_fork = &main_th->all_forks[i];
@@ -81,6 +82,7 @@ t_philo	*socrate_maker(t_main_th *main_th, int tab_arg[], bool nb_meal)
     while (i < nb_philo)
     {
         philo_tab[i].index = i + 1;
+        philo_tab[i].monitor_counter = &(main_th->counter);
         philo_tab[i].ready = &(main_th->ready);
         philo_tab[i].is_dead = &(main_th->is_dead);
         philo_tab[i].right_fork = 1;
@@ -94,10 +96,15 @@ t_philo	*socrate_maker(t_main_th *main_th, int tab_arg[], bool nb_meal)
     return (init_mtx(philo_tab, main_th, nb_philo));
 }
 
-void  init_main_thread(t_main_th *main_th)
+void  init_main_thread(t_main_th *main_th, int nb_philo, int argc)
 {
+    if (argc == 6)
+        main_th->counter = nb_philo;
+    else
+        main_th->counter = -1;
     main_th->ready = 0;
     main_th->is_dead = 0;
+    pthread_mutex_init(&main_th->counter_mtx, NULL);
     pthread_mutex_init(&main_th->ready_mutex, NULL);
     pthread_mutex_init(&main_th->isdead_mutex, NULL);
 }

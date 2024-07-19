@@ -6,12 +6,11 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 15:20:21 by florian           #+#    #+#             */
-/*   Updated: 2024/07/19 15:27:46 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/19 17:42:20 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
-bool    am_i_dead(t_philo *philo);
 
 bool  print_message(char *msg, t_philo *philo, bool is_dead)
 {
@@ -37,6 +36,8 @@ static bool take_a_fork(t_philo *philo, pthread_mutex_t *fork_mtx, bool *fork)
 {
     while (1)
     {
+        if (am_i_dead(philo))
+            return (print_message("died", philo, 1), 1);
         if (pthread_mutex_lock(fork_mtx))
             return (ft_perror("error -> lock mutex\n"), 1);
         if (!*fork)
@@ -51,13 +52,10 @@ static bool take_a_fork(t_philo *philo, pthread_mutex_t *fork_mtx, bool *fork)
                 return (ft_perror("error -> unlock mutex\n"), 1);
             break ;
         }
+        if (am_i_dead(philo))
+            return (print_message("died", philo, 1), 1);
         if (check_death(philo))
             return (1);
-        if (am_i_dead(philo))
-        {
-            print_message("died", philo, 1);
-            return (1);
-        }
         usleep(100);
     }
     return (0);
@@ -65,8 +63,6 @@ static bool take_a_fork(t_philo *philo, pthread_mutex_t *fork_mtx, bool *fork)
 
 bool  take_forks(t_philo *philo)
 {
-    if (print_message("is thinking", philo, 0))
-            return (1);
     if (take_a_fork(philo, philo->shared_mtx.right_fork, &(philo->right_fork)))
         return (1);
     if (print_message("has taken a fork", philo, 0))
@@ -90,5 +86,7 @@ bool  drop_forks(t_philo *philo)
     *(philo->left_fork) = 1;
     if (pthread_mutex_unlock(philo->shared_mtx.left_fork))
         return (1);
+    if (philo->time_data.nb_meal > 0)
+        (philo->time_data.nb_meal)--;
     return (0);
 }

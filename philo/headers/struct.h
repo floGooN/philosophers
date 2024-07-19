@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/19 15:20:26 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/19 17:52:05 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,14 @@ typedef struct s_shared_mtx
     pthread_mutex_t *isdead_mtx;
     pthread_mutex_t *right_fork;
     pthread_mutex_t *left_fork;
+    pthread_mutex_t *counter_mtx;
 } t_shared_mtx;
 
 typedef struct s_philo
 {
 	pthread_t       philo_id;
     int             index;
+    int             *monitor_counter;
     bool            *ready;
     bool            *is_dead;
     bool            right_fork;
@@ -52,10 +54,11 @@ typedef struct s_main_th
 {
     bool            ready;
     bool            is_dead;
+    int             counter;
+    pthread_mutex_t counter_mtx;
     pthread_mutex_t ready_mutex;
     pthread_mutex_t isdead_mutex;
     pthread_mutex_t *all_forks;
-
 } t_main_th;
 
 #endif
