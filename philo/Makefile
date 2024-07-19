@@ -6,7 +6,7 @@
 #    By: florian <florian@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 09:47:22 by fberthou          #+#    #+#              #
-#    Updated: 2024/07/19 17:31:58 by florian          ###   ########.fr        #
+#    Updated: 2024/07/19 17:55:48 by florian          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,14 +24,12 @@ HDR_PATH				= headers
 SRC_PATH				= sources
 MAIN_PATH				= $(SRC_PATH)/main
 CHECK_ARGS_PATH			= $(SRC_PATH)/check_args
-INIT_PATH				= $(SRC_PATH)/init
 SIMULATION_PATH			= $(SRC_PATH)/simulation
 
 #TEMPORARY FILES#
 BUILD_PATH				= .build
 BUILD_MAIN_PATH			= $(BUILD_PATH)/main
 BUILD_CHECK_PATH		= $(BUILD_PATH)/check_args
-BUILD_INIT_PATH			= $(BUILD_PATH)/init
 BUILD_SIMULATION_PATH	= $(BUILD_PATH)/simulation
 
 # --- COMPILATION FLAGS --- #
@@ -57,7 +55,7 @@ $(NAME)	: $(OBJ)
 
 #######     OBJECTS    #######
 $(BUILD_PATH)/%.o : $(SRC_PATH)/%.c
-	@mkdir -p $(BUILD_PATH) $(BUILD_CHECK_PATH) $(BUILD_MAIN_PATH) $(BUILD_INIT_PATH) $(BUILD_SIMULATION_PATH)
+	@mkdir -p $(BUILD_PATH) $(BUILD_CHECK_PATH) $(BUILD_MAIN_PATH) $(BUILD_SIMULATION_PATH)
 	$(CC) $(COMPFLAGS) -I$(HDR_PATH) -c $< -o $@
 
 ### --- CLEAN MANAGEMENT --- ###

@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/19 17:43:23 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/19 18:18:24 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static int  init_routine(t_philo *philo)
     if (wait_loop(philo))
         return (1);
     if (philo->index % 2)
-        usleep(500);
+        usleep(100);
     philo->time_data.start_time = get_time();
     philo->time_data.last_time = philo->time_data.start_time;
     return (0);
