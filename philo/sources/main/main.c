@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/18 18:00:53 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/19 15:37:15 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static bool launcher(t_philo *philo_tab, int tab_size, t_main_th *main_th)
     i = 0;
     while (i < tab_size)
     {
-        if (pthread_create(&philo_tab[i].philo_id, NULL, routine, &philo_tab[i]))
+        if (pthread_create(&philo_tab[i].philo_id, NULL, odd_routine, &philo_tab[i]))
         {
             stop_simu(NULL, main_th);
             free_all(philo_tab, i + 1, main_th);
@@ -79,7 +79,7 @@ int	main(int argc, char **argv)
     if (!philo_tab)
         return (3);
     if (launcher(philo_tab, tab_arg[0], &main_th))
-        return (4);
+        return (4); //all is free in launcher
     if (main_routine(&main_th))
     {
         stop_simu(NULL, &main_th);

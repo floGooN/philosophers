@@ -6,13 +6,13 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/18 17:41:05 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/19 15:18:12 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-bool  change_death_status(t_philo *philo)
+bool    change_death_status(t_philo *philo)
 {
     if (pthread_mutex_lock(philo->shared_mtx.isdead_mtx))
         return (ft_perror("error -> lock mtx change_death_status\n"), 1);
@@ -22,7 +22,7 @@ bool  change_death_status(t_philo *philo)
     return (0);
 }
 
-bool  check_death(t_philo *philo)
+bool    check_death(t_philo *philo)
 {
     if (pthread_mutex_lock(philo->shared_mtx.isdead_mtx))
         return (ft_perror("error -> lock mtx check_death\n"), 1);
@@ -37,7 +37,7 @@ bool  check_death(t_philo *philo)
     return (0);
 }
 
-long int  get_time(void)
+long int    get_time(void)
 {
 	struct timeval	tv;
 
@@ -46,12 +46,11 @@ long int  get_time(void)
 	return ((long int) (tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-void    ft_usleep(long int time)
+bool    am_i_dead(t_philo *philo)
 {
-    const long int	start = get_time();
-
-    while ((get_time() - start) < time)
-        usleep(time / 10);
+    if (get_time() - philo->time_data.last_time >= philo->time_data.death_time)
+        return (1);
+    return (0);
 }
 
 int update_time(t_philo *philo)
@@ -62,7 +61,7 @@ int update_time(t_philo *philo)
     if (curr_time == -1)
         return (-1);
     if (curr_time - philo->time_data.last_time >= philo->time_data.death_time)
-        return (1);
+        return (print_message("died", philo, 1));
     philo->time_data.last_time = curr_time;
     return (0);
 }
