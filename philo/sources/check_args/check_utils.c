@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   check_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 11:00:33 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/19 17:36:50 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/20 11:03:36 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
-size_t	ft_strlen(const char *str);
+size_t		ft_strlen(const char *str);
 
 static int	skip_spaces(const char *nptr)
 {
