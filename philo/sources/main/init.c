@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/20 11:03:19 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/20 20:30:12 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-static int	preapare_init(t_main_th *main_th, pthread_mutex_t **print_mtx,
+static int	preapare_init_mtx(t_main_th *main_th, pthread_mutex_t **print_mtx,
 		int nb_philo)
 {
 	int	i;
@@ -38,7 +38,7 @@ static t_philo	*init_mtx(t_philo *philo_tab, t_main_th *main_th, int nb_philo)
 	int				i;
 
 	i = 0;
-	if (preapare_init(main_th, &print, nb_philo) == -1)
+	if (preapare_init_mtx(main_th, &print, nb_philo) == -1)
 		return (free(philo_tab), NULL);
 	while (i < nb_philo)
 	{
@@ -83,7 +83,7 @@ t_philo	*socrate_maker(t_main_th *main_th, int tab_arg[], bool nb_meal)
 	{
 		philo_tab[i].index = i + 1;
 		philo_tab[i].monitor_counter = &(main_th->counter);
-		philo_tab[i].ready = &(main_th->ready);
+        philo_tab[i].nb_philo = tab_arg[0];
 		philo_tab[i].is_dead = &(main_th->is_dead);
 		philo_tab[i].right_fork = 1;
 		if (i == nb_philo - 1)
@@ -102,9 +102,9 @@ void	init_main_thread(t_main_th *main_th, int nb_philo, int argc)
 		main_th->counter = nb_philo;
 	else
 		main_th->counter = -1;
-	main_th->ready = 0;
 	main_th->is_dead = 0;
 	pthread_mutex_init(&main_th->counter_mtx, NULL);
 	pthread_mutex_init(&main_th->ready_mutex, NULL);
 	pthread_mutex_init(&main_th->isdead_mutex, NULL);
+    pthread_mutex_lock(&main_th->ready_mutex);
 }

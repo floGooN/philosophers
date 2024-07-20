@@ -3,47 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/20 11:03:44 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/20 20:27:13 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-static int	say_ready(t_main_th *main_th)
-{
-	if (pthread_mutex_lock(&main_th->ready_mutex))
-		return (ft_perror("error -> lock ready_mtx (say ready)\n"), 1);
-	main_th->ready = 1;
-	if (pthread_mutex_unlock(&main_th->ready_mutex))
-		return (ft_perror("error -> unlock ready_mtx (say ready)\n"), 1);
-	return (0);
-}
-
 static int	main_routine(t_main_th *main_th)
 {
-	if (say_ready(main_th))
-		return (1);
+    pthread_mutex_unlock(&main_th->ready_mutex);
 	while (1)
 	{
-		if (pthread_mutex_lock(&main_th->isdead_mutex))
-			return (ft_perror("error -> lock isdead_mtx\n"), 1);
+		pthread_mutex_lock(&main_th->isdead_mutex);
 		if (main_th->is_dead)
 		{
-			if (pthread_mutex_unlock(&main_th->isdead_mutex))
-				return (ft_perror("error -> unlock isdead_mtx\n"), 1);
+			pthread_mutex_unlock(&main_th->isdead_mutex);
 			break ;
 		}
-		if (pthread_mutex_unlock(&main_th->isdead_mutex))
-			return (ft_perror("error -> unlock isdead_mtx\n"), 1);
-		if (pthread_mutex_lock(&main_th->counter_mtx))
-			return (ft_perror("error -> lock counter_mtx\n"), 1);
+		pthread_mutex_unlock(&main_th->isdead_mutex);
+		pthread_mutex_lock(&main_th->counter_mtx);
 		if (main_th->counter == 0)
 			return (pthread_mutex_unlock(&main_th->counter_mtx));
-		if (pthread_mutex_unlock(&main_th->counter_mtx))
-			return (ft_perror("error -> unlock counter_mtx\n"), 1);
+		pthread_mutex_unlock(&main_th->counter_mtx);
 		usleep(100);
 	}
 	return (0);

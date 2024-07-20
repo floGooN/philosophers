@@ -6,7 +6,7 @@
 #    By: florian <florian@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 09:47:22 by fberthou          #+#    #+#              #
-#    Updated: 2024/07/19 17:55:48 by florian          ###   ########.fr        #
+#    Updated: 2024/07/20 19:16:46 by florian          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,7 @@ BUILD_CHECK_PATH		= $(BUILD_PATH)/check_args
 BUILD_SIMULATION_PATH	= $(BUILD_PATH)/simulation
 
 # --- COMPILATION FLAGS --- #
-COMPFLAGS	=	-Wall -Wextra -Werror
+COMPFLAGS	=	#-Wall -Wextra -Werror
 
 SRC		=	$(MAIN_PATH)/main.c $(MAIN_PATH)/utils.c $(MAIN_PATH)/init.c \
 			\

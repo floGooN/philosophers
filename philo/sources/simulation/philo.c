@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/07/19 18:18:24 by florian          ###   ########.fr       */
-=======
-/*   Updated: 2024/07/20 11:03:56 by fberthou         ###   ########.fr       */
->>>>>>> f0ce4ff8b573666064e4ff720f644be9944d4ad8
+/*   Updated: 2024/07/20 20:24:57 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +14,19 @@
 
 static void	*end_of_loop(t_philo *philo)
 {
-	if (pthread_mutex_lock(philo->shared_mtx.counter_mtx))
-		return (NULL);
+	pthread_mutex_lock(philo->shared_mtx.counter_mtx);
 	*(philo->monitor_counter) -= 1;
-	if (pthread_mutex_unlock(philo->shared_mtx.counter_mtx))
-		return (NULL);
+    if (!*(philo->monitor_counter))
+    {
+        pthread_mutex_lock(philo->shared_mtx.print_mtx);
+        printf("\n******************************\n");
+        printf("\n*                            *\n");
+        printf("\n*   THE SIMULATION IS OVER   *\n");
+        printf("\n*                            *\n");
+        printf("\n******************************\n\n");
+        pthread_mutex_unlock(philo->shared_mtx.print_mtx);
+    }
+	pthread_mutex_unlock(philo->shared_mtx.counter_mtx);
 	return (NULL);
 }
 
@@ -34,51 +38,17 @@ static void	ft_usleep(long int time)
 		usleep(time / 10);
 }
 
-static int	wait_loop(t_philo *philo)
+static int	wait_everybody_pls(t_philo *philo)
 {
-	while (!check_death(philo))
-	{
-		if (pthread_mutex_lock(philo->shared_mtx.ready_mtx))
-			return (ft_perror("error -> lock mtx (wait_loop)\n"), 1);
-		if (*(philo->ready))
-		{
-			if (pthread_mutex_unlock(philo->shared_mtx.ready_mtx))
-				return (ft_perror("error -> unlock mtx (wait_loop)\n"), 1);
-			return (0);
-		}
-		if (pthread_mutex_unlock(philo->shared_mtx.ready_mtx))
-			return (ft_perror("error -> unlock mtx (wait_loop)\n"), 1);
-		if (pthread_mutex_lock(philo->shared_mtx.isdead_mtx))
-			return (ft_perror("error -> unlock mtx (wait_loop)\n"), 1);
-		if (*(philo->is_dead))
-			return (pthread_mutex_unlock(philo->shared_mtx.isdead_mtx), 1);
-		if (pthread_mutex_unlock(philo->shared_mtx.isdead_mtx))
-			return (ft_perror("error -> unlock mtx (wait_loop)\n"), 1);
-		usleep(100);
-	}
+    pthread_mutex_lock(philo->shared_mtx.ready_mtx);
+    pthread_mutex_unlock(philo->shared_mtx.ready_mtx);
+    if (philo->index % 2)
+        usleep(20 * philo->nb_philo);
+    philo->time_data.start_time = get_time();
+    philo->time_data.last_time = philo->time_data.start_time;
 	return (1);
 }
 
-static int	init_routine(t_philo *philo)
-{
-<<<<<<< HEAD
-    if (wait_loop(philo))
-        return (1);
-    if (philo->index % 2)
-        usleep(100);
-    philo->time_data.start_time = get_time();
-    philo->time_data.last_time = philo->time_data.start_time;
-    return (0);
-=======
-	if (wait_loop(philo))
-		return (1);
-	if (philo->index % 2)
-		usleep(500);
-	philo->time_data.start_time = get_time();
-	philo->time_data.last_time = philo->time_data.start_time;
-	return (0);
->>>>>>> f0ce4ff8b573666064e4ff720f644be9944d4ad8
-}
 
 void	*routine(void *arg)
 {
@@ -89,6 +59,8 @@ void	*routine(void *arg)
 		return (stop_simu(philo, NULL), NULL);
 	while (philo->time_data.nb_meal)
 	{
+		if (print_message("is thinking", philo, 0))
+			return (stop_simu(philo, NULL), NULL);
 		if (take_forks(philo))
 			return (stop_simu(philo, NULL), NULL);
 		if (update_time(philo))
@@ -103,8 +75,6 @@ void	*routine(void *arg)
 		if (print_message("is sleeping", philo, 0))
 			return (stop_simu(philo, NULL), NULL);
 		ft_usleep(philo->time_data.time_to_sleep);
-		if (print_message("is thinking", philo, 0))
-			return (stop_simu(philo, NULL), NULL);
 	}
 	return (end_of_loop(philo));
 }

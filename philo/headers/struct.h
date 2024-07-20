@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/20 11:04:20 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/20 20:27:28 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ typedef struct s_philo
 	pthread_t		philo_id;
 	int				index;
 	int				*monitor_counter;
-	bool			*ready;
+    int             nb_philo;
 	bool			*is_dead;
 	bool			right_fork;
 	bool			*left_fork;
@@ -52,7 +52,6 @@ typedef struct s_philo
 
 typedef struct s_main_th
 {
-	bool			ready;
 	bool			is_dead;
 	int				counter;
 	pthread_mutex_t	counter_mtx;
