@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/19 17:52:05 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/20 11:04:20 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,47 +18,47 @@
 
 typedef struct s_time
 {
-    long int    start_time;
-    long int    death_time;
-    long int    last_time;
-    long int    time_to_die;
-    long int    time_to_eat;
-    long int    time_to_sleep;
-    int         nb_meal;
-} t_time;
+	long int		start_time;
+	long int		death_time;
+	long int		last_time;
+	long int		time_to_die;
+	long int		time_to_eat;
+	long int		time_to_sleep;
+	int				nb_meal;
+}					t_time;
 
 typedef struct s_shared_mtx
 {
-    pthread_mutex_t *print_mtx;
-    pthread_mutex_t *ready_mtx;
-    pthread_mutex_t *isdead_mtx;
-    pthread_mutex_t *right_fork;
-    pthread_mutex_t *left_fork;
-    pthread_mutex_t *counter_mtx;
-} t_shared_mtx;
+	pthread_mutex_t	*print_mtx;
+	pthread_mutex_t	*ready_mtx;
+	pthread_mutex_t	*isdead_mtx;
+	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*counter_mtx;
+}					t_shared_mtx;
 
 typedef struct s_philo
 {
-	pthread_t       philo_id;
-    int             index;
-    int             *monitor_counter;
-    bool            *ready;
-    bool            *is_dead;
-    bool            right_fork;
-    bool            *left_fork;
-    t_time          time_data;
-    t_shared_mtx    shared_mtx;
-}	t_philo ;
+	pthread_t		philo_id;
+	int				index;
+	int				*monitor_counter;
+	bool			*ready;
+	bool			*is_dead;
+	bool			right_fork;
+	bool			*left_fork;
+	t_time			time_data;
+	t_shared_mtx	shared_mtx;
+}					t_philo;
 
 typedef struct s_main_th
 {
-    bool            ready;
-    bool            is_dead;
-    int             counter;
-    pthread_mutex_t counter_mtx;
-    pthread_mutex_t ready_mutex;
-    pthread_mutex_t isdead_mutex;
-    pthread_mutex_t *all_forks;
-} t_main_th;
+	bool			ready;
+	bool			is_dead;
+	int				counter;
+	pthread_mutex_t	counter_mtx;
+	pthread_mutex_t	ready_mutex;
+	pthread_mutex_t	isdead_mutex;
+	pthread_mutex_t	*all_forks;
+}					t_main_th;
 
 #endif

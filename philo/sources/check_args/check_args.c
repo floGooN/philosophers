@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   check_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 13:46:59 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/19 17:33:07 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/20 11:03:31 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-static bool ft_isdigit(char *arg)
+static bool	ft_isdigit(char *arg)
 {
 	size_t	i;
 
@@ -36,9 +36,9 @@ static bool ft_isdigit(char *arg)
 
 int	check_args(int argc, char **argv, int *tab_arg)
 {
-	int         i_argv;
-	int         i_tab_arg;
-	long int    tmp;
+	int			i_argv;
+	int			i_tab_arg;
+	long int	tmp;
 
 	i_argv = 1;
 	i_tab_arg = 0;
@@ -52,10 +52,9 @@ int	check_args(int argc, char **argv, int *tab_arg)
 			if (tmp < 0 || tmp > INT_MAX)
 				return (ft_perror("Error -> last arg invalid\n"));
 		}
-		else
-			if (tmp < 0 || tmp > INT_MAX)
-				return (ft_perror("Error -> an argument is invalid\n"));
-		tab_arg[i_tab_arg] = (int) tmp;
+		else if (tmp < 0 || tmp > INT_MAX)
+			return (ft_perror("Error -> an argument is invalid\n"));
+		tab_arg[i_tab_arg] = (int)tmp;
 		i_argv++;
 		i_tab_arg++;
 	}
