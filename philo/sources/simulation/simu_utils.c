@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   simu_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/20 19:07:43 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/21 13:27:34 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,10 @@
 
 bool	change_death_status(t_philo *philo)
 {
-	pthread_mutex_lock(philo->shared_mtx.isdead_mtx);
-	*(philo->is_dead) = 1;
-	pthread_mutex_unlock(philo->shared_mtx.isdead_mtx);
-	return (0);
-}
-
-bool	check_death(t_philo *philo)
-{
-	pthread_mutex_lock(philo->shared_mtx.isdead_mtx);
-	if (*(philo->is_dead))
-	{
-		pthread_mutex_unlock(philo->shared_mtx.isdead_mtx);
-		return (1);
-	}
-	pthread_mutex_unlock(philo->shared_mtx.isdead_mtx);
-	return (0);
+	pthread_mutex_lock(philo->shared_mtx.stop_mtx);
+	*(philo->stop_simu) = 1;
+	pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
+	return (1);
 }
 
 long int	get_time(void)
@@ -45,8 +33,8 @@ int	update_time(t_philo *philo)
 	long int	curr_time;
 
 	curr_time = get_time();
-	if (curr_time - philo->time_data.last_time >= philo->time_data.death_time)
-		return (print_message("died", philo, 1));
+	if (curr_time - philo->time_data.last_time >= philo->time_data.time_to_die)
+		return (change_death_status(philo));
 	philo->time_data.last_time = curr_time;
 	return (0);
 }
