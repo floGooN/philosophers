@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/21 13:24:15 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/22 13:21:25 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,17 +48,20 @@ void	free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 {
 	int	i;
 
-	i = 0;
-	while (i < tab_size)
+	i = -1;
+	while (++i < tab_size)
 	{
 		if (pthread_join(philo_tab[i].philo_id, NULL))
 		{
 			ft_perror("error -> join thread\n");
 			return ;
 		}
+	}
+	i = -1;
+	while (++i < tab_size)
+	{
 		pthread_mutex_destroy(philo_tab[i].shared_mtx.stop_mtx);
 		pthread_mutex_destroy(philo_tab[i].shared_mtx.right_fork);
-		i++;
 	}
 	pthread_mutex_destroy(&main_th->ready_mutex);
 	pthread_mutex_destroy(&main_th->print_mutex);

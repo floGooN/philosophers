@@ -6,18 +6,40 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/21 13:27:34 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/22 13:28:11 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-bool	change_death_status(t_philo *philo)
+void	wait_everybody_pls(t_philo *philo)
 {
-	pthread_mutex_lock(philo->shared_mtx.stop_mtx);
-	*(philo->stop_simu) = 1;
-	pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
-	return (1);
+	pthread_mutex_lock(philo->shared_mtx.ready_mtx);
+	pthread_mutex_unlock(philo->shared_mtx.ready_mtx);
+	if (philo->index % 2)
+		usleep(20 * philo->nb_philo);
+	philo->time_data.start_time = get_time();
+	philo->time_data.last_time = philo->time_data.start_time;
+}
+
+void	*end_of_loop(t_philo *philo)
+{
+	pthread_mutex_lock(philo->shared_mtx.counter_mtx);
+	*(philo->counter) -= 1;
+	if (!*(philo->counter))
+	{
+		pthread_mutex_lock(philo->shared_mtx.print_mtx);
+		printf("\n******************************\n");
+		printf("*                            *\n");
+		printf("*   THE SIMULATION IS OVER   *\n");
+		printf("*                            *\n");
+		printf("******************************\n\n");
+		pthread_mutex_unlock(philo->shared_mtx.print_mtx);
+		pthread_mutex_unlock(philo->shared_mtx.counter_mtx);
+		return (NULL);
+	}
+	pthread_mutex_unlock(philo->shared_mtx.counter_mtx);
+	return (NULL);
 }
 
 long int	get_time(void)
@@ -36,5 +58,13 @@ int	update_time(t_philo *philo)
 	if (curr_time - philo->time_data.last_time >= philo->time_data.time_to_die)
 		return (change_death_status(philo));
 	philo->time_data.last_time = curr_time;
+	pthread_mutex_lock(philo->shared_mtx.stop_mtx);
+	if (*(philo->stop_simu))
+	{
+		pthread_mutex_unlock(philo->shared_mtx.print_mtx);
+		pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
+		return (1);
+	}
+	pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
 	return (0);
 }

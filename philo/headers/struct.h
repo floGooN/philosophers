@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/21 12:22:41 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/22 13:21:59 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef struct s_philo
 	pthread_t		philo_id;
 	int				index;
 	int				*counter;
-    int             nb_philo;
+	int				nb_philo;
 	bool			*stop_simu;
 	bool			right_fork;
 	bool			*left_fork;
@@ -58,7 +58,7 @@ typedef struct s_main_th
 	pthread_mutex_t	ready_mutex;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	counter_mtx;
-	
+
 	pthread_mutex_t	*stop_mtx;
 	pthread_mutex_t	*all_forks;
 }					t_main_th;

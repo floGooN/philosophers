@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/21 13:33:51 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/22 13:21:15 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	init_mtx(t_philo *philo_tab, t_main_th *main_th, int nb_philo)
 {
-	int				i;
+	int	i;
 
 	i = 0;
 	while (i < nb_philo)
@@ -45,8 +45,8 @@ static void	init_time(t_time *time_data, int tab_arg[], int argc)
 
 void	socrate_maker(t_main_th *main_th, int tab_arg[], int argc)
 {
-	int		nb_philo;
-	int		i;
+	int	nb_philo;
+	int	i;
 
 	i = 0;
 	nb_philo = tab_arg[0];
@@ -54,15 +54,14 @@ void	socrate_maker(t_main_th *main_th, int tab_arg[], int argc)
 	{
 		main_th->philo_tab[i].index = i + 1;
 		main_th->philo_tab[i].counter = &main_th->counter;
-        main_th->philo_tab[i].nb_philo = tab_arg[0];
+		main_th->philo_tab[i].nb_philo = tab_arg[0];
 		main_th->philo_tab[i].stop_simu = &main_th->stop_simu[i];
 		main_th->philo_tab[i].right_fork = 1;
 		if (i == nb_philo - 1)
-			main_th->philo_tab[i].left_fork = \
-			&main_th->philo_tab[0].right_fork;
+			main_th->philo_tab[i].left_fork = &main_th->philo_tab[0].right_fork;
 		else
-			main_th->philo_tab[i].left_fork = \
-			&main_th->philo_tab[i + 1].right_fork;
+			main_th->philo_tab[i].left_fork = &main_th->philo_tab[i
+				+ 1].right_fork;
 		init_time(&main_th->philo_tab[i].time_data, tab_arg, argc);
 		i++;
 	}
@@ -101,7 +100,7 @@ static int	alloc_tab(t_main_th *main_th, int nb_philo)
 int	init_main_thread(t_main_th *main_th, int nb_philo, int argc)
 {
 	int	i;
-	
+
 	i = 0;
 	if (alloc_tab(main_th, nb_philo))
 		return (-1);
@@ -118,5 +117,5 @@ int	init_main_thread(t_main_th *main_th, int nb_philo, int argc)
 		pthread_mutex_init(&main_th->all_forks[i], NULL);
 		i++;
 	}
-    return (pthread_mutex_lock(&main_th->ready_mutex));
+	return (pthread_mutex_lock(&main_th->ready_mutex));
 }

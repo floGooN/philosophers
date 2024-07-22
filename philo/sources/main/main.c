@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/21 13:36:38 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/22 13:21:08 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 static int	print_death(t_main_th *main_th, int nb_philo, t_philo curr_philo)
 {
 	int	i;
-	
+
 	pthread_mutex_lock(&main_th->print_mutex);
 	i = 0;
+	printf("%ld %d died\n", get_time() - curr_philo.time_data.start_time,
+		curr_philo.index);
 	while (i < nb_philo)
 	{
 		pthread_mutex_lock(&main_th->stop_mtx[i]);
@@ -25,8 +27,6 @@ static int	print_death(t_main_th *main_th, int nb_philo, t_philo curr_philo)
 		pthread_mutex_unlock(&main_th->stop_mtx[i]);
 		i++;
 	}
-	printf("%ld %d died\n", get_time() - curr_philo.time_data.start_time, \
-			curr_philo.index);
 	pthread_mutex_unlock(&main_th->print_mutex);
 	return (0);
 }
@@ -36,7 +36,7 @@ static int	main_routine(t_main_th *main_th, int nb_philo)
 	int	i;
 
 	i = -1;
-    pthread_mutex_unlock(&main_th->ready_mutex);
+	pthread_mutex_unlock(&main_th->ready_mutex);
 	while (1)
 	{
 		while (++i < nb_philo)
@@ -91,7 +91,8 @@ int	main(int argc, char **argv)
 	socrate_maker(&main_th, tab_arg, argc);
 	if (launcher(main_th.philo_tab, tab_arg[0], &main_th))
 		return (4);
-	main_routine(&main_th, tab_arg[0]);
+	if (main_routine(&main_th, tab_arg[0]))
+		return (5);
 	free_all(main_th.philo_tab, tab_arg[0], &main_th);
 	return (0);
 }
