@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 13:34:17 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/23 07:46:29 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void	*routine(void *arg)
 		if (!philo->time_data.nb_meal)
 		{
 			pthread_mutex_lock(philo->shared_mtx.print_mtx);
-			printf("%ld %d is thinking\n", get_time()
+			printf("%ld %d is sleeping\n", get_time()
 				- philo->time_data.start_time, philo->index);
 			pthread_mutex_unlock(philo->shared_mtx.print_mtx);
 			break ;
