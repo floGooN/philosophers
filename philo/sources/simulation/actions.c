@@ -3,14 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 15:20:21 by florian           #+#    #+#             */
-/*   Updated: 2024/07/22 13:28:57 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/24 15:57:24 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
+
+long int	get_time(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((long int)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+int	update_time(t_philo *philo)
+{
+	long int	curr_time;
+
+	curr_time = get_time();
+	if (curr_time - philo->time_data.last_time >= philo->time_data.time_to_die)
+		return (change_death_status(philo));
+	philo->time_data.last_time = curr_time;
+	pthread_mutex_lock(philo->shared_mtx.stop_mtx);
+	if (*(philo->stop_simu))
+	{
+		pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
+		return (1);
+	}
+	pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
+	return (0);
+}
 
 void	drop_forks(t_philo *philo)
 {

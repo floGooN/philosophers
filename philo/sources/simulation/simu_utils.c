@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 18:43:18 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 15:57:38 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,30 +58,4 @@ void	*end_of_loop(t_philo *philo)
 	pthread_mutex_lock(philo->shared_mtx.end_mtx);
 	pthread_mutex_unlock(philo->shared_mtx.end_mtx);
     return (NULL);
-}
-
-long int	get_time(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return ((long int)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
-}
-
-int	update_time(t_philo *philo)
-{
-	long int	curr_time;
-
-	curr_time = get_time();
-	if (curr_time - philo->time_data.last_time >= philo->time_data.time_to_die)
-		return (change_death_status(philo));
-	philo->time_data.last_time = curr_time;
-	pthread_mutex_lock(philo->shared_mtx.stop_mtx);
-	if (*(philo->stop_simu))
-	{
-		pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
-		return (1);
-	}
-	pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
-	return (0);
 }

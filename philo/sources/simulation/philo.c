@@ -6,13 +6,13 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 15:43:13 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 16:09:10 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-static bool	check_status(t_philo *philo)
+static inline bool  check_status(t_philo *philo)
 {
 	pthread_mutex_lock(philo->shared_mtx.stop_mtx);
 	if (*(philo->stop_simu))
@@ -24,7 +24,7 @@ static bool	check_status(t_philo *philo)
 	return (0);
 }
 
-static void	print_message(char *msg, t_philo *philo)
+static inline void	print_message(char *msg, t_philo *philo)
 {
 	pthread_mutex_lock(philo->shared_mtx.print_mtx);
 	if (check_status(philo))
