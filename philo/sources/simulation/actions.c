@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 15:20:21 by florian           #+#    #+#             */
-/*   Updated: 2024/07/24 19:59:47 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 20:03:09 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,12 @@ int	update_time(t_philo *philo)
 
 void	drop_forks(t_philo *philo)
 {
+    pthread_mutex_lock(philo->shared_mtx.l_fork_mtx);
 	*(philo->shared_res.left_fork) = 1;
+    pthread_mutex_unlock(philo->shared_mtx.l_fork_mtx);
+    pthread_mutex_lock(philo->shared_mtx.r_fork_mtx);
 	philo->shared_res.right_fork = 1;
+    pthread_mutex_unlock(philo->shared_mtx.r_fork_mtx);
 	if (philo->time_data.nb_meal > 0)
 		(philo->time_data.nb_meal)--;
 	return ;

@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 19:59:50 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 20:23:14 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static inline int   take_right(t_philo *philo)
 		if (get_time()
 			- philo->time_data.last_time >= philo->time_data.time_to_die)
 			return (print_death(philo));
-		usleep(100);
+		usleep(10 * philo->nb_philo);
     }
     return (print_message("has taken a fork", philo));
 }
@@ -73,9 +73,11 @@ static inline int   take_forks(t_philo *philo)
 		if (get_time()
 			- philo->time_data.last_time >= philo->time_data.time_to_die)
 			return (print_death(philo));
-		usleep(100);
+		usleep(10 * philo->nb_philo);
     }
-    return (print_message("has taken a fork", philo), 0);
+    if (print_message("has taken a fork", philo))
+        return (1);
+    return (update_time(philo));
 }
 void	*routine(void *arg)
 {
@@ -89,8 +91,6 @@ void	*routine(void *arg)
             break ;
         if (take_forks(philo))
             break ;
-		if (update_time(philo))
-			break ;
 		if (print_message("is eating", philo))
             break ;
 		ft_usleep(philo->time_data.time_to_eat);
