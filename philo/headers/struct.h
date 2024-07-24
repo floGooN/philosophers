@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 16:37:33 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 19:37:21 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,16 @@ typedef struct s_shared_mtx
 	pthread_mutex_t	*ready_mtx;
 	pthread_mutex_t	*end_mtx;
 	pthread_mutex_t	*print_mtx;
+	pthread_mutex_t	*r_fork_mtx;
+	pthread_mutex_t	*l_fork_mtx;
 }   t_shared_mtx;
 
 typedef struct  s_shared_resources
 {
-	atomic_bool		right_fork;
-	atomic_bool		*left_fork;
-	atomic_int		*stop_simu;
-	atomic_int		*counter;
+	bool		right_fork;
+	bool		*left_fork;
+	atomic_int  *stop_simu;
+	atomic_int	*counter;
 }   t_shared_res ;
 
 typedef struct s_philo
@@ -60,6 +62,7 @@ typedef struct s_main_th
 	pthread_mutex_t	ready_mutex;
 	pthread_mutex_t	end_mutex;
 	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	*all_forks_mtx;
 }   t_main_th;
 
 #endif

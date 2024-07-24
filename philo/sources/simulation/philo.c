@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 19:22:17 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 19:43:33 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,14 @@ static inline int   take_right(t_philo *philo)
 {
     while (1)
     {
+        pthread_mutex_lock(philo->shared_mtx.r_fork_mtx);
         if (philo->shared_res.right_fork == 1)
         {
             philo->shared_res.right_fork = 0;
+            pthread_mutex_unlock(philo->shared_mtx.r_fork_mtx);
             break ;
         }
+        pthread_mutex_unlock(philo->shared_mtx.r_fork_mtx);
 		if (get_time()
 			- philo->time_data.last_time >= philo->time_data.time_to_die)
 			return (print_death(philo));
@@ -59,11 +62,14 @@ static inline int   take_forks(t_philo *philo)
         return (1);
     while (1)
     {
+        pthread_mutex_lock(philo->shared_mtx.l_fork_mtx);
         if (*(philo->shared_res.left_fork) == 1)
         {
             *(philo->shared_res.left_fork) = 0;
+            pthread_mutex_unlock(philo->shared_mtx.l_fork_mtx);
             break ;
         }
+        pthread_mutex_unlock(philo->shared_mtx.l_fork_mtx);
 		if (get_time()
 			- philo->time_data.last_time >= philo->time_data.time_to_die)
 			return (print_death(philo));

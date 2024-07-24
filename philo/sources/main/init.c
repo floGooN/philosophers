@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 18:55:17 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 19:40:37 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@ static void	init_mtx(t_philo *philo_tab, t_main_th *main_th, int nb_philo)
 		philo_tab[i].shared_mtx.ready_mtx = &main_th->ready_mutex;
 		philo_tab[i].shared_mtx.end_mtx = &main_th->end_mutex;
 		philo_tab[i].shared_mtx.print_mtx = &main_th->print_mutex;
+		philo_tab[i].shared_mtx.r_fork_mtx = &main_th->all_forks_mtx[i];
+        if (i  == nb_philo - 1)
+		    philo_tab[i].shared_mtx.l_fork_mtx = &main_th->all_forks_mtx[0];
+        else
+		    philo_tab[i].shared_mtx.l_fork_mtx = &main_th->all_forks_mtx[i + 1];
 		i++;
 	}
 }
@@ -65,17 +70,25 @@ void	socrate_maker(t_main_th *main_th, int tab_arg[], int argc)
 
 int	init_main_thread(t_main_th *main_th, int nb_philo, int argc)
 {
-    main_th->philo_tab = ft_calloc(nb_philo, sizeof(t_philo));
+    size_t  i;
+
+    i = -1;
     main_th->stop_simu = 0;
+    main_th->philo_tab = ft_calloc(nb_philo, sizeof(t_philo));
 	if (!main_th->philo_tab)
 		return (ft_perror("error -> alloc_tab()"), -1);
-	if (argc == 6)
+	main_th->all_forks_mtx = malloc(nb_philo * sizeof(pthread_mutex_t));
+    if (!main_th->all_forks_mtx)
+        return (ft_perror("error -> forks"), free(main_th->philo_tab), -1);
+    if (argc == 6)
 		main_th->counter = nb_philo;
 	else
 		main_th->counter = -1;
 	pthread_mutex_init(&main_th->ready_mutex, NULL);
 	pthread_mutex_init(&main_th->end_mutex, NULL);
 	pthread_mutex_init(&main_th->print_mutex, NULL);
+    while(++i < nb_philo)
+        pthread_mutex_init(&main_th->all_forks_mtx[i], NULL);
     pthread_mutex_lock(&main_th->end_mutex);
     pthread_mutex_lock(&main_th->ready_mutex);
 	return (0);

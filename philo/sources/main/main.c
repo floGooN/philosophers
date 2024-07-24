@@ -6,11 +6,11 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 19:19:15 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 19:49:45 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <philo.h>
+#include "philo.h"
 
 
 static int	main_routine(t_main_th *main_th, int nb_philo)
