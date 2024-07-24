@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 16:22:35 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 18:00:00 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,17 +58,8 @@ void	free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 			return ;
 		}
 	}
-	i = -1;
-	while (++i < tab_size)
-	{
-		pthread_mutex_destroy(philo_tab[i].shared_mtx.stop_mtx);
-		pthread_mutex_destroy(philo_tab[i].shared_mtx.right_fork);
-	}
 	pthread_mutex_destroy(&main_th->ready_mutex);
+	pthread_mutex_destroy(&main_th->end_mutex);
 	pthread_mutex_destroy(&main_th->print_mutex);
-	pthread_mutex_destroy(&main_th->counter_mtx);
 	free(philo_tab);
-	free(main_th->stop_simu);
-	free(main_th->stop_mtx);
-	free(main_th->all_forks);
 }

@@ -6,90 +6,71 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 15:43:13 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 19:22:17 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-static bool	check_status(t_philo *philo)
+int print_death(t_philo *philo);
+
+static inline long int  get_time(void)
 {
-	pthread_mutex_lock(philo->shared_mtx.stop_mtx);
-	if (*(philo->stop_simu))
-	{
-		pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
-		return (1);
-	}
-	pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
-	return (0);
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((long int)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-static void	print_message(char *msg, t_philo *philo)
+static inline int	print_message(char *msg, t_philo *philo)
 {
 	pthread_mutex_lock(philo->shared_mtx.print_mtx);
-	if (check_status(philo))
+	if (*(philo->shared_res.stop_simu) == 1)
 	{
 		pthread_mutex_unlock(philo->shared_mtx.print_mtx);
-		return ;
+		return (1);
 	}
 	printf("%ld %d %s\n", get_time() - philo->time_data.start_time,
 		philo->index, msg);
 	pthread_mutex_unlock(philo->shared_mtx.print_mtx);
-	return ;
+	return (0);
 }
 
-static int	take_right(t_philo *philo)
+static inline int   take_right(t_philo *philo)
 {
-	while (1)
-	{
-		pthread_mutex_lock(philo->shared_mtx.right_fork);
-		if (philo->right_fork)
-		{
-			philo->right_fork = 0;
-			pthread_mutex_unlock(philo->shared_mtx.right_fork);
-			pthread_mutex_lock(philo->shared_mtx.print_mtx);
-			if (check_status(philo))
-				return (pthread_mutex_unlock(philo->shared_mtx.print_mtx), 1);
-			printf("%ld %d has taken a fork\n", get_time()
-				- philo->time_data.start_time, philo->index);
-			return (pthread_mutex_unlock(philo->shared_mtx.print_mtx), 0);
-		}
-		pthread_mutex_unlock(philo->shared_mtx.right_fork);
+    while (1)
+    {
+        if (philo->shared_res.right_fork == 1)
+        {
+            philo->shared_res.right_fork = 0;
+            break ;
+        }
 		if (get_time()
 			- philo->time_data.last_time >= philo->time_data.time_to_die)
-			return (1);
+			return (print_death(philo));
 		usleep(100);
-	}
-	return (1);
+    }
+    return (print_message("has taken a fork", philo));
 }
 
-static int	take_forks(t_philo *philo)
+static inline int   take_forks(t_philo *philo)
 {
-	if (take_right(philo))
-		return (1);
-	while (1)
-	{
-		pthread_mutex_lock(philo->shared_mtx.left_fork);
-		if (*(philo->left_fork))
-		{
-			*(philo->left_fork) = 0;
-			pthread_mutex_unlock(philo->shared_mtx.left_fork);
-			pthread_mutex_lock(philo->shared_mtx.print_mtx);
-			if (check_status(philo))
-				return (pthread_mutex_unlock(philo->shared_mtx.print_mtx), 1);
-			printf("%ld %d has taken a fork\n", get_time()
-				- philo->time_data.start_time, philo->index);
-			return (pthread_mutex_unlock(philo->shared_mtx.print_mtx));
-		}
-		pthread_mutex_unlock(philo->shared_mtx.left_fork);
+    if (take_right(philo))
+        return (1);
+    while (1)
+    {
+        if (*(philo->shared_res.left_fork) == 1)
+        {
+            *(philo->shared_res.left_fork) = 0;
+            break ;
+        }
 		if (get_time()
 			- philo->time_data.last_time >= philo->time_data.time_to_die)
-			return (1);
+			return (print_death(philo));
 		usleep(100);
-	}
-    return (pthread_mutex_unlock(philo->shared_mtx.print_mtx), 1);
+    }
+    return (print_message("has taken a fork", philo), 0);
 }
-
 void	*routine(void *arg)
 {
 	t_philo	*philo;
@@ -98,12 +79,14 @@ void	*routine(void *arg)
 	wait_everybody_pls(philo);
 	while (philo->time_data.nb_meal)
 	{
-		print_message("is thinking", philo);
-		if (take_forks(philo))
+		if (print_message("is thinking", philo))
+            break ;
+        if (take_forks(philo))
             break ;
 		if (update_time(philo))
-			return (NULL);
-		print_message("is eating", philo);
+			break ;
+		if (print_message("is eating", philo))
+            break ;
 		ft_usleep(philo->time_data.time_to_eat);
 		drop_forks(philo);
 		if (!philo->time_data.nb_meal)
@@ -111,7 +94,8 @@ void	*routine(void *arg)
             print_message("is sleeping", philo);
 			break ;
         }
-		print_message("is sleeping", philo);
+		if (print_message("is sleeping", philo))
+            break ;
 		ft_usleep(philo->time_data.time_to_sleep);
 	}
 	return (end_of_loop(philo));

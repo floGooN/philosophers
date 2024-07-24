@@ -6,57 +6,23 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 18:30:01 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 19:19:15 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-static int	print_death(t_main_th *main_th, int nb_philo, t_philo curr_philo)
-{
-	int	i;
-
-	pthread_mutex_lock(&main_th->print_mutex);
-	i = 0;
-	printf("%ld %d died\n", get_time() - curr_philo.time_data.start_time,
-		curr_philo.index);
-	while (i < nb_philo)
-	{
-		pthread_mutex_lock(&main_th->stop_mtx[i]);
-		main_th->stop_simu[i] = 1;
-		pthread_mutex_unlock(&main_th->stop_mtx[i]);
-		i++;
-	}
-	pthread_mutex_unlock(&main_th->print_mutex);
-	return (0);
-}
 
 static int	main_routine(t_main_th *main_th, int nb_philo)
 {
-	int	i;
-
-	i = -1;
 	pthread_mutex_unlock(&main_th->ready_mutex);
 	while (1)
 	{
-		while (++i < nb_philo)
-		{
-			pthread_mutex_lock(&main_th->stop_mtx[i]);
-			if (main_th->stop_simu[i] == 1)
-			{
-				pthread_mutex_unlock(&main_th->stop_mtx[i]);
-				return (print_death(main_th, nb_philo, main_th->philo_tab[i]));
-			}
-            if (main_th->stop_simu[i] == -2)
-                return (0);
-			pthread_mutex_unlock(&main_th->stop_mtx[i]);
-		}
-		pthread_mutex_lock(&main_th->counter_mtx);
+        if (main_th->stop_simu == 1 && main_th->counter != 0)
+            return (0);
 		if (!main_th->counter)
-			return (pthread_mutex_unlock(&main_th->counter_mtx));
-		pthread_mutex_unlock(&main_th->counter_mtx);
-		i = -1;
-		usleep(100);
+			return (0);
+		usleep(1000);
 	}
 	return (0);
 }

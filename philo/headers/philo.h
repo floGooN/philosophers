@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 14:54:39 by florian           #+#    #+#             */
-/*   Updated: 2024/07/22 13:29:55 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/24 17:56:17 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,14 @@ void		free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th);
 void		*routine(void *arg);
 
 //  ==== simulation/action.c ====  //
-void		drop_forks(t_philo *philo);
-void		ft_usleep(long int time);
-bool		change_death_status(t_philo *philo);
+int         print_death(t_philo *philo);
+int         update_time(t_philo *philo);
+void	    drop_forks(t_philo *philo);
+void	    ft_usleep(long int time);
 
 //  ==== simulation/simu_utils.c ====  //
+void        print_end(t_philo *philo);
 void		wait_everybody_pls(t_philo *philo);
 void		*end_of_loop(t_philo *philo);
-long int	get_time(void);
-int			update_time(t_philo *philo);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 18:43:18 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 19:20:57 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,63 +25,30 @@ void    print_end(t_philo *philo)
 
 void	wait_everybody_pls(t_philo *philo)
 {
+    struct timeval  tv;
+
 	pthread_mutex_lock(philo->shared_mtx.ready_mtx);
 	pthread_mutex_unlock(philo->shared_mtx.ready_mtx);
 	if (philo->index % 2)
-		usleep(20 * philo->nb_philo);
-	philo->time_data.start_time = get_time();
+		usleep(50 * philo->nb_philo);
+	gettimeofday(&tv, NULL);
+	philo->time_data.start_time = \
+    (long int)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 	philo->time_data.last_time = philo->time_data.start_time;
 }
 
 void	*end_of_loop(t_philo *philo)
 {
-	pthread_mutex_lock(philo->shared_mtx.counter_mtx);
     if (philo->time_data.nb_meal > 0)
-    {
-	    *(philo->counter) += 1;
-        pthread_mutex_lock(philo->shared_mtx.stop_mtx);
-        *(philo->stop_simu) = 1;
-        pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
-    }
+	    *(philo->shared_res.counter) += 1;
     else if (philo->time_data.nb_meal == 0)
-        *(philo->counter) -= 1;
-	if (!*(philo->counter))
+        *(philo->shared_res.counter) -= 1;
+	if (*(philo->shared_res.counter) == 0)
 	{
-        pthread_mutex_lock(philo->shared_mtx.stop_mtx);
-        *(philo->stop_simu) = -2;
-        pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
+        *(philo->shared_res.stop_simu) = 1;
         print_end(philo);
-		pthread_mutex_unlock(philo->shared_mtx.counter_mtx);
-		return (NULL);
 	}
-	pthread_mutex_unlock(philo->shared_mtx.counter_mtx);
 	pthread_mutex_lock(philo->shared_mtx.end_mtx);
 	pthread_mutex_unlock(philo->shared_mtx.end_mtx);
     return (NULL);
-}
-
-long int	get_time(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return ((long int)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
-}
-
-int	update_time(t_philo *philo)
-{
-	long int	curr_time;
-
-	curr_time = get_time();
-	if (curr_time - philo->time_data.last_time >= philo->time_data.time_to_die)
-		return (change_death_status(philo));
-	philo->time_data.last_time = curr_time;
-	pthread_mutex_lock(philo->shared_mtx.stop_mtx);
-	if (*(philo->stop_simu))
-	{
-		pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
-		return (1);
-	}
-	pthread_mutex_unlock(philo->shared_mtx.stop_mtx);
-	return (0);
 }
