@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 18:14:41 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 15:43:13 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	*routine(void *arg)
 		ft_usleep(philo->time_data.time_to_eat);
 		drop_forks(philo);
 		if (!philo->time_data.nb_meal)
-        {
+		{
             print_message("is sleeping", philo);
 			break ;
         }
