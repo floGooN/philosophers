@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 13:21:25 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/22 16:22:35 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void	free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 	int	i;
 
 	i = -1;
+    pthread_mutex_unlock(&main_th->end_mutex);
 	while (++i < tab_size)
 	{
 		if (pthread_join(philo_tab[i].philo_id, NULL))

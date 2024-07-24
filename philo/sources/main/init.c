@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 13:21:15 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/22 16:43:52 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ static void	init_mtx(t_philo *philo_tab, t_main_th *main_th, int nb_philo)
 	while (i < nb_philo)
 	{
 		philo_tab[i].shared_mtx.ready_mtx = &main_th->ready_mutex;
+		philo_tab[i].shared_mtx.end_mtx = &main_th->end_mutex;
 		philo_tab[i].shared_mtx.print_mtx = &main_th->print_mutex;
 		philo_tab[i].shared_mtx.counter_mtx = &main_th->counter_mtx;
 		philo_tab[i].shared_mtx.stop_mtx = &main_th->stop_mtx[i];
@@ -109,6 +110,7 @@ int	init_main_thread(t_main_th *main_th, int nb_philo, int argc)
 	else
 		main_th->counter = -1;
 	pthread_mutex_init(&main_th->ready_mutex, NULL);
+	pthread_mutex_init(&main_th->end_mutex, NULL);
 	pthread_mutex_init(&main_th->print_mutex, NULL);
 	pthread_mutex_init(&main_th->counter_mtx, NULL);
 	while (i < nb_philo)
@@ -117,5 +119,6 @@ int	init_main_thread(t_main_th *main_th, int nb_philo, int argc)
 		pthread_mutex_init(&main_th->all_forks[i], NULL);
 		i++;
 	}
+    pthread_mutex_lock(&main_th->end_mutex);
 	return (pthread_mutex_lock(&main_th->ready_mutex));
 }

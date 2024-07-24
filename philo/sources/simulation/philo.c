@@ -3,18 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 13:34:17 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/22 18:14:41 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
-
-void		*end_of_loop(t_philo *philo);
-void		wait_everybody_pls(t_philo *philo);
-void		drop_forks(t_philo *philo);
 
 static bool	check_status(t_philo *philo)
 {
@@ -56,7 +52,7 @@ static int	take_right(t_philo *philo)
 				return (pthread_mutex_unlock(philo->shared_mtx.print_mtx), 1);
 			printf("%ld %d has taken a fork\n", get_time()
 				- philo->time_data.start_time, philo->index);
-			return (pthread_mutex_unlock(philo->shared_mtx.print_mtx));
+			return (pthread_mutex_unlock(philo->shared_mtx.print_mtx), 0);
 		}
 		pthread_mutex_unlock(philo->shared_mtx.right_fork);
 		if (get_time()
@@ -67,10 +63,10 @@ static int	take_right(t_philo *philo)
 	return (1);
 }
 
-static void	take_forks(t_philo *philo)
+static int	take_forks(t_philo *philo)
 {
 	if (take_right(philo))
-		return ;
+		return (1);
 	while (1)
 	{
 		pthread_mutex_lock(philo->shared_mtx.left_fork);
@@ -80,18 +76,18 @@ static void	take_forks(t_philo *philo)
 			pthread_mutex_unlock(philo->shared_mtx.left_fork);
 			pthread_mutex_lock(philo->shared_mtx.print_mtx);
 			if (check_status(philo))
-				break ;
+				return (pthread_mutex_unlock(philo->shared_mtx.print_mtx), 1);
 			printf("%ld %d has taken a fork\n", get_time()
 				- philo->time_data.start_time, philo->index);
-			break ;
+			return (pthread_mutex_unlock(philo->shared_mtx.print_mtx));
 		}
 		pthread_mutex_unlock(philo->shared_mtx.left_fork);
 		if (get_time()
 			- philo->time_data.last_time >= philo->time_data.time_to_die)
-			return ;
+			return (1);
 		usleep(100);
 	}
-	pthread_mutex_unlock(philo->shared_mtx.print_mtx);
+    return (pthread_mutex_unlock(philo->shared_mtx.print_mtx), 1);
 }
 
 void	*routine(void *arg)
@@ -103,20 +99,18 @@ void	*routine(void *arg)
 	while (philo->time_data.nb_meal)
 	{
 		print_message("is thinking", philo);
-		take_forks(philo);
+		if (take_forks(philo))
+            break ;
 		if (update_time(philo))
 			return (NULL);
 		print_message("is eating", philo);
 		ft_usleep(philo->time_data.time_to_eat);
 		drop_forks(philo);
 		if (!philo->time_data.nb_meal)
-		{
-			pthread_mutex_lock(philo->shared_mtx.print_mtx);
-			printf("%ld %d is thinking\n", get_time()
-				- philo->time_data.start_time, philo->index);
-			pthread_mutex_unlock(philo->shared_mtx.print_mtx);
+        {
+            print_message("is sleeping", philo);
 			break ;
-		}
+        }
 		print_message("is sleeping", philo);
 		ft_usleep(philo->time_data.time_to_sleep);
 	}

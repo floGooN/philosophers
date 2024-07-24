@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 13:21:59 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/22 18:28:22 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_time
 typedef struct s_shared_mtx
 {
 	pthread_mutex_t	*ready_mtx;
+	pthread_mutex_t	*end_mtx;
 	pthread_mutex_t	*print_mtx;
 	pthread_mutex_t	*counter_mtx;
 	pthread_mutex_t	*stop_mtx;
@@ -42,7 +43,7 @@ typedef struct s_philo
 	int				index;
 	int				*counter;
 	int				nb_philo;
-	bool			*stop_simu;
+	int 			*stop_simu;
 	bool			right_fork;
 	bool			*left_fork;
 	t_time			time_data;
@@ -52,13 +53,12 @@ typedef struct s_philo
 typedef struct s_main_th
 {
 	t_philo			*philo_tab;
-	bool			*stop_simu;
-
+	int 			*stop_simu;
 	int				counter;
 	pthread_mutex_t	ready_mutex;
+	pthread_mutex_t	end_mutex;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	counter_mtx;
-
 	pthread_mutex_t	*stop_mtx;
 	pthread_mutex_t	*all_forks;
 }					t_main_th;

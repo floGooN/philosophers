@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/22 13:21:08 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/22 18:30:01 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,13 @@ static int	main_routine(t_main_th *main_th, int nb_philo)
 		while (++i < nb_philo)
 		{
 			pthread_mutex_lock(&main_th->stop_mtx[i]);
-			if (main_th->stop_simu[i])
+			if (main_th->stop_simu[i] == 1)
 			{
 				pthread_mutex_unlock(&main_th->stop_mtx[i]);
 				return (print_death(main_th, nb_philo, main_th->philo_tab[i]));
 			}
+            if (main_th->stop_simu[i] == -2)
+                return (0);
 			pthread_mutex_unlock(&main_th->stop_mtx[i]);
 		}
 		pthread_mutex_lock(&main_th->counter_mtx);
@@ -66,8 +68,8 @@ static bool	launcher(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 	i = 0;
 	while (i < tab_size)
 	{
-		if (pthread_create(&philo_tab[i].philo_id, NULL, routine,
-				&philo_tab[i]))
+		if (pthread_create(&philo_tab[i].philo_id, NULL, routine, \
+            &philo_tab[i]))
 		{
 			free_all(philo_tab, i + 1, main_th);
 			return (ft_perror("error -> launcher\n"), 1);
@@ -91,8 +93,7 @@ int	main(int argc, char **argv)
 	socrate_maker(&main_th, tab_arg, argc);
 	if (launcher(main_th.philo_tab, tab_arg[0], &main_th))
 		return (4);
-	if (main_routine(&main_th, tab_arg[0]))
-		return (5);
+	main_routine(&main_th, tab_arg[0]);
 	free_all(main_th.philo_tab, tab_arg[0], &main_th);
 	return (0);
 }
