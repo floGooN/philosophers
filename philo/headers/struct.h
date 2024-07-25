@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:50 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 19:55:43 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 12:24:29 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ typedef struct s_philo
 typedef struct s_main_th
 {
 	t_philo			*philo_tab;
-	atomic_int      stop_simu;
+	atomic_int      *stop_simu;
 	atomic_int  	counter;
 	pthread_mutex_t	ready_mutex;
 	pthread_mutex_t	end_mutex;

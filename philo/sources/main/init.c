@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 18:17:30 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 19:58:53 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 12:34:20 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	socrate_maker(t_main_th *main_th, int tab_arg[], int argc)
 		else
 			main_th->philo_tab[i].shared_res.left_fork = \
             &main_th->philo_tab[i + 1].shared_res.right_fork;
-		main_th->philo_tab[i].shared_res.stop_simu = &main_th->stop_simu;
+		main_th->philo_tab[i].shared_res.stop_simu = &main_th->stop_simu[i];
 		main_th->philo_tab[i].shared_res.counter = &main_th->counter;
 		init_time(&main_th->philo_tab[i].time_data, tab_arg, argc);
 		i++;
@@ -68,18 +68,34 @@ void	socrate_maker(t_main_th *main_th, int tab_arg[], int argc)
 	init_mtx(main_th->philo_tab, main_th, nb_philo);
 }
 
+static int	init_tab(t_main_th *main_th, int nb_philo)
+{
+    main_th->philo_tab = ft_calloc(nb_philo, sizeof(t_philo));
+	if (!main_th->philo_tab)
+		return (ft_perror("error -> alloc philo_tab\n"), -1);
+	main_th->all_forks_mtx = malloc(nb_philo * sizeof(pthread_mutex_t));
+    if (!main_th->all_forks_mtx)
+	{
+		free(main_th->philo_tab);
+        return (ft_perror("error -> alloc forks\n"), -1);
+	}
+	main_th->stop_simu = ft_calloc(nb_philo, sizeof(atomic_int));
+	if (!main_th->stop_simu)
+	{
+		free(main_th->philo_tab);
+		free(main_th->all_forks_mtx);
+        return (ft_perror("error -> alloc stop_tab\n"), -1);
+	}
+	return (0);
+}
+
 int	init_main_thread(t_main_th *main_th, int nb_philo, int argc)
 {
     size_t  i;
 
     i = -1;
-    main_th->stop_simu = 0;
-    main_th->philo_tab = ft_calloc(nb_philo, sizeof(t_philo));
-	if (!main_th->philo_tab)
-		return (ft_perror("error -> alloc_tab()"), -1);
-	main_th->all_forks_mtx = malloc(nb_philo * sizeof(pthread_mutex_t));
-    if (!main_th->all_forks_mtx)
-        return (ft_perror("error -> forks"), free(main_th->philo_tab), -1);
+	if (init_tab(main_th, nb_philo))
+		return (-1);
     if (argc == 6)
 		main_th->counter = nb_philo;
 	else

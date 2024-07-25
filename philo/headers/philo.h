@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 14:54:39 by florian           #+#    #+#             */
-/*   Updated: 2024/07/24 17:56:17 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 15:27:49 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,9 @@ void		free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th);
 void		*routine(void *arg);
 
 //  ==== simulation/action.c ====  //
-int         print_death(t_philo *philo);
-int         update_time(t_philo *philo);
+void        update_time(t_philo *philo);
 void	    drop_forks(t_philo *philo);
-void	    ft_usleep(long int time);
+void        ft_usleep(long int time, atomic_int *stop);
 
 //  ==== simulation/simu_utils.c ====  //
 void        print_end(t_philo *philo);

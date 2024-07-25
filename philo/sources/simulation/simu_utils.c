@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 11:59:16 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 19:58:03 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 15:30:02 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	wait_everybody_pls(t_philo *philo)
 	pthread_mutex_lock(philo->shared_mtx.ready_mtx);
 	pthread_mutex_unlock(philo->shared_mtx.ready_mtx);
 	if (philo->index % 2)
-		usleep(50 * philo->nb_philo);
+		usleep(10 * philo->nb_philo);
 	gettimeofday(&tv, NULL);
 	philo->time_data.start_time = \
     (long int)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);

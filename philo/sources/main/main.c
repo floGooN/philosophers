@@ -6,25 +6,52 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 19:55:49 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 14:39:39 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-
-static int	main_routine(t_main_th *main_th, int nb_philo)
+static inline long int  get_time(void)
 {
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((long int)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+static inline void    print_death(t_main_th *main_th, int i)
+{
+    const t_philo   *philo = &main_th->philo_tab[i];
+    int             i;
+
+    i = -1;
+    pthread_mutex_lock(&main_th->print_mutex);
+    printf("%ld %d died\n", get_time() - philo->time_data.start_time, \
+            philo->index);
+    while (++i < philo->nb_philo)
+        main_th->stop_simu[i] = 1;
+    pthread_mutex_unlock(&main_th->print_mutex);
+}
+
+static void main_routine(t_main_th *main_th, int nb_philo)
+{
+	int	i;
+
+	i = -1;
 	pthread_mutex_unlock(&main_th->ready_mutex);
 	while (1)
 	{
-        if (main_th->stop_simu == 1 && main_th->counter != 0)
-            return (0);
+		while (++i < nb_philo && main_th->counter != 0)
+		{
+        	if (main_th->stop_simu[i] == 1)
+            	return (print_death(main_th, i));
+		}
+		i = -1;
 		if (!main_th->counter)
-			return (0);
+			return ;
 		usleep(1000);
 	}
-	return (0);
 }
 
 static bool	launcher(t_philo *philo_tab, int tab_size, t_main_th *main_th)
