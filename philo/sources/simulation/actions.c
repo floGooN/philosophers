@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 15:20:21 by florian           #+#    #+#             */
-/*   Updated: 2024/07/25 15:23:03 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 17:19:36 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void	drop_forks(t_philo *philo)
     pthread_mutex_lock(philo->shared_mtx.l_fork_mtx);
 	*(philo->shared_res.left_fork) = 1;
     pthread_mutex_unlock(philo->shared_mtx.l_fork_mtx);
+    if (philo->time_data.nb_meal > 0)
+        philo->time_data.nb_meal--;
 	return ;
 }
 
@@ -52,4 +54,18 @@ void	ft_usleep(long int time, atomic_int *stop)
         else
             return ;
     }
+}
+
+void    wait_everybody(t_philo *philo)
+{
+    pthread_mutex_lock(philo->shared_mtx.print_mtx);
+	if (*(philo->shared_res.stop_simu) == 1)
+	{
+		pthread_mutex_unlock(philo->shared_mtx.print_mtx);
+		return ;
+	}
+	printf("%ld %d is sleeping\n", get_time() - philo->time_data.start_time,
+		philo->index);
+	pthread_mutex_unlock(philo->shared_mtx.print_mtx);
+	ft_usleep(philo->time_data.time_to_sleep, philo->shared_res.stop_simu);
 }

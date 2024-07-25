@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 19:57:55 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 17:34:19 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,6 @@ void	free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th)
     i = -1;
     while (++i < tab_size)
 	    pthread_mutex_destroy(&main_th->all_forks_mtx[i]);
+    // !!!!!!!!!!!!!!!!! have to free other pointers !!!!!!!!!!!!!!!!!!!!
 	free(philo_tab);
 }

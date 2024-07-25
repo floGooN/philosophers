@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/25 14:39:39 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 17:40:20 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ static inline long int  get_time(void)
 	return ((long int)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-static inline void    print_death(t_main_th *main_th, int i)
+static inline void    print_death(t_main_th *main_th, int philo_index)
 {
-    const t_philo   *philo = &main_th->philo_tab[i];
+    const t_philo   *philo = &main_th->philo_tab[philo_index];
     int             i;
 
     i = -1;
@@ -40,17 +40,27 @@ static void main_routine(t_main_th *main_th, int nb_philo)
 
 	i = -1;
 	pthread_mutex_unlock(&main_th->ready_mutex);
-	while (1)
+	while (!usleep(10 * nb_philo))
 	{
-		while (++i < nb_philo && main_th->counter != 0)
+		while (++i < nb_philo)
 		{
-        	if (main_th->stop_simu[i] == 1)
+        	if (main_th->stop_simu[i] == 1 && main_th->counter != -2)
             	return (print_death(main_th, i));
+            if (main_th->counter == -2)
+            {
+                i = -1;
+                while (++i < nb_philo)
+                    main_th->stop_simu[i] = 1;
+                return ;
+            }
 		}
 		i = -1;
-		if (!main_th->counter)
+		if (main_th->counter == -2)
+        {
+            while (++i < nb_philo)
+                main_th->stop_simu[i] = 1;
 			return ;
-		usleep(1000);
+        }
 	}
 }
 
