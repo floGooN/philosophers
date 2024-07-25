@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 20:23:14 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/24 20:33:38 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,7 @@ static inline int   take_right(t_philo *philo)
             break ;
         }
         pthread_mutex_unlock(philo->shared_mtx.r_fork_mtx);
-		if (get_time()
-			- philo->time_data.last_time >= philo->time_data.time_to_die)
+		if (get_time() - philo->time_data.last_time >= philo->time_data.time_to_die)
 			return (print_death(philo));
 		usleep(10 * philo->nb_philo);
     }
@@ -60,6 +59,8 @@ static inline int   take_forks(t_philo *philo)
 {
     if (take_right(philo))
         return (1);
+    // if (get_time() - philo->time_data.last_time >= philo->time_data.time_to_die)
+	// 		return (print_death(philo));
     while (1)
     {
         pthread_mutex_lock(philo->shared_mtx.l_fork_mtx);
