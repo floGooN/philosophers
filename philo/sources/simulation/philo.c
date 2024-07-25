@@ -6,13 +6,13 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/25 17:48:44 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 19:28:35 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-void    wait_everybody(t_philo *philo);
+void    letal_loop(t_philo *philo);
 
 static inline long int  get_time(void)
 {
@@ -99,24 +99,8 @@ void	*routine(void *arg)
             philo->time_data.nb_meal == 0 || philo->time_data.nb_meal == -2)
 		{
             if (philo->time_data.nb_meal == 0)
-            {
-
-                *(philo->shared_res.counter) -= 1;
-                if (*(philo->shared_res.counter) == 0)
-                {
-                    if (*(philo->shared_res.stop_simu) == 0)
-                    {
-                        *(philo->shared_res.stop_simu) = 1;
-                        *(philo->shared_res.counter) = -2;
-                    }
-                    else
-                        break ;
-                }
-                else
-                    philo->time_data.nb_meal = -1;
-            }
-            if (*(philo->shared_res.stop_simu))
-    			break ;
+                letal_loop(philo);
+            break ;
         }
 		print_message("is sleeping", philo);
 		ft_usleep(philo->time_data.time_to_sleep, philo->shared_res.stop_simu);

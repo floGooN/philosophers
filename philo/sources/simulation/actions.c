@@ -6,7 +6,7 @@
 /*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 15:20:21 by florian           #+#    #+#             */
-/*   Updated: 2024/07/25 17:19:36 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 19:32:27 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,16 +56,30 @@ void	ft_usleep(long int time, atomic_int *stop)
     }
 }
 
-void    wait_everybody(t_philo *philo)
+void    letal_loop(t_philo *philo)
 {
-    pthread_mutex_lock(philo->shared_mtx.print_mtx);
-	if (*(philo->shared_res.stop_simu) == 1)
-	{
-		pthread_mutex_unlock(philo->shared_mtx.print_mtx);
-		return ;
-	}
-	printf("%ld %d is sleeping\n", get_time() - philo->time_data.start_time,
-		philo->index);
-	pthread_mutex_unlock(philo->shared_mtx.print_mtx);
-	ft_usleep(philo->time_data.time_to_sleep, philo->shared_res.stop_simu);
+    // decrement philo->counter
+    *(philo->shared_res.counter) -= 1;
+    // if last philo
+    if (*(philo->shared_res.counter) == 0)
+    {
+        if (*(philo->shared_res.stop_simu) == 0) // si personne n'est mort
+        { // stop and exit loop counter -2 == reussite
+            *(philo->shared_res.stop_simu) = 1;
+            *(philo->shared_res.counter) = -2;
+        }
+        return ;
+    }
+    else // else continue the loop
+        philo->time_data.nb_meal = -1;
+    while (1)
+    {
+
+		print_message("is sleeping", philo);
+		ft_usleep(philo->time_data.time_to_sleep, philo->shared_res.stop_simu);
+
+    }
+
+    if (*(philo->shared_res.stop_simu))
+        return ;
 }
