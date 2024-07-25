@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 14:54:39 by florian           #+#    #+#             */
-/*   Updated: 2024/07/25 16:15:00 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 23:38:18 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,21 +34,23 @@ void	socrate_maker(t_main_th *main_th, int tab_args[], int argc);
 int		init_main_thread(t_main_th *main_th, int nb_philo, int argc);
 
 //  ==== main/utils.c ====  //
-int	       ft_perror(const char *str);
-void       *ft_calloc(size_t nmemb, size_t size);
-void       free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th);
+int		ft_perror(const char *str);
+void	*ft_calloc(size_t nmemb, size_t size);
+void	free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th);
+void	change_all_status(t_main_th *main_th, int nb_philo);
 
 // ==== simulation/philo.c ====  //
-void    *routine(void *arg);
+void	*routine(void *arg);
 
 //  ==== simulation/action.c ====  //
-void    update_time(t_philo *philo);
-void    drop_forks(t_philo *philo);
-void    ft_usleep(long int time, atomic_int *stop);
+void	update_time(t_philo *philo);
+void	drop_forks(t_philo *philo);
+void	ft_usleep(long int time, atomic_int *stop);
+void	end_of_loop(t_philo *philo);
 
 //  ==== simulation/simu_utils.c ====  //
-void    print_end(t_philo *philo);
-void    wait_everybody_pls(t_philo *philo);
-void    *end_of_loop(t_philo *philo);
+void	print_end(t_philo *philo);
+void	wait_everybody_pls(t_philo *philo);
+void	*end_of_simu(t_philo *philo);
 
 #endif

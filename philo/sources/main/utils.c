@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 08:51:26 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/25 17:34:19 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 23:43:52 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,21 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (new_mem_place);
 }
 
+void	change_all_status(t_main_th *main_th, int nb_philo)
+{
+	int	i;
+
+	i = -1;
+	while (++i < nb_philo)
+		main_th->stop_simu[i] = 1;
+}
+
 void	free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 {
 	int	i;
 
 	i = -1;
-    pthread_mutex_unlock(&main_th->end_mutex);
+	pthread_mutex_unlock(&main_th->end_mutex);
 	while (++i < tab_size)
 	{
 		if (pthread_join(philo_tab[i].philo_id, NULL))
@@ -61,9 +70,10 @@ void	free_all(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 	pthread_mutex_destroy(&main_th->ready_mutex);
 	pthread_mutex_destroy(&main_th->end_mutex);
 	pthread_mutex_destroy(&main_th->print_mutex);
-    i = -1;
-    while (++i < tab_size)
-	    pthread_mutex_destroy(&main_th->all_forks_mtx[i]);
-    // !!!!!!!!!!!!!!!!! have to free other pointers !!!!!!!!!!!!!!!!!!!!
+	i = -1;
+	while (++i < tab_size)
+		pthread_mutex_destroy(&main_th->all_forks_mtx[i]);
+	free(main_th->stop_simu);
+	free(main_th->all_forks_mtx);
 	free(philo_tab);
 }

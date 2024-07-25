@@ -3,18 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/25 19:28:35 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 23:59:02 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-void    letal_loop(t_philo *philo);
-
-static inline long int  get_time(void)
+static inline long int	get_time(void)
 {
 	struct timeval	tv;
 
@@ -30,55 +28,57 @@ static inline void	print_message(char *msg, t_philo *philo)
 		pthread_mutex_unlock(philo->shared_mtx.print_mtx);
 		return ;
 	}
-	printf("%ld %d %s\n", get_time() - philo->time_data.start_time,
+	printf("%ld %d %s\n", get_time() - philo->time_data.start_time, \
 		philo->index, msg);
 	pthread_mutex_unlock(philo->shared_mtx.print_mtx);
 	return ;
 }
 
-static inline void   take_right(t_philo *philo)
+static inline void	take_right(t_philo *philo)
 {
-    while (1)
-    {
-        pthread_mutex_lock(philo->shared_mtx.r_fork_mtx);
-		if (get_time() - philo->time_data.last_time >= philo->time_data.time_to_die)
-        {
-            *(philo->shared_res.stop_simu) = 1;
-            pthread_mutex_unlock(philo->shared_mtx.r_fork_mtx);
-            return ;
-        }
-        if (philo->shared_res.right_fork == 1)
-        {
-            philo->shared_res.right_fork = 0;
-            pthread_mutex_unlock(philo->shared_mtx.r_fork_mtx);
-            return (print_message("has taken a fork", philo));
-        }
-        pthread_mutex_unlock(philo->shared_mtx.r_fork_mtx);
+	while (1)
+	{
+		pthread_mutex_lock(philo->shared_mtx.r_fork_mtx);
+		if (get_time() \
+			- philo->time_data.last_time >= philo->time_data.time_to_die)
+		{
+			*(philo->shared_res.stop_simu) = 1;
+			pthread_mutex_unlock(philo->shared_mtx.r_fork_mtx);
+			return ;
+		}
+		if (philo->shared_res.right_fork == 1)
+		{
+			philo->shared_res.right_fork = 0;
+			pthread_mutex_unlock(philo->shared_mtx.r_fork_mtx);
+			return (print_message("has taken a fork", philo));
+		}
+		pthread_mutex_unlock(philo->shared_mtx.r_fork_mtx);
 		usleep(10 * philo->nb_philo);
-    }
+	}
 }
 
-static inline void   take_forks(t_philo *philo)
+static inline void	take_forks(t_philo *philo)
 {
-    take_right(philo);
-    while (1)
-    {
-        pthread_mutex_lock(philo->shared_mtx.l_fork_mtx);
-		if (get_time() - philo->time_data.last_time >= philo->time_data.time_to_die)
-        {
-            *(philo->shared_res.stop_simu) = 1;
-            pthread_mutex_unlock(philo->shared_mtx.l_fork_mtx);
-            return ;
-        }
-        if (*(philo->shared_res.left_fork) == 1)
-        {
-            *(philo->shared_res.left_fork) = 0;
-            pthread_mutex_unlock(philo->shared_mtx.l_fork_mtx);
-            return (print_message("has taken a fork", philo));
-        }
-        pthread_mutex_unlock(philo->shared_mtx.l_fork_mtx);
+	take_right(philo);
+	while (1)
+	{
+		pthread_mutex_lock(philo->shared_mtx.l_fork_mtx);
+		if (get_time() - philo->time_data.last_time >= \
+			philo->time_data.time_to_die)
+		{
+			*(philo->shared_res.stop_simu) = 1;
+			pthread_mutex_unlock(philo->shared_mtx.l_fork_mtx);
+			return ;
+		}
+		if (*(philo->shared_res.left_fork) == 1)
+		{
+			*(philo->shared_res.left_fork) = 0;
+			pthread_mutex_unlock(philo->shared_mtx.l_fork_mtx);
+			return (print_message("has taken a fork", philo));
+		}
+		pthread_mutex_unlock(philo->shared_mtx.l_fork_mtx);
 		usleep(10 * philo->nb_philo);
-    }
+	}
 }
 
 void	*routine(void *arg)
@@ -90,20 +90,22 @@ void	*routine(void *arg)
 	while (1)
 	{
 		print_message("is thinking", philo);
-        take_forks(philo);
-        update_time(philo);
-        print_message("is eating", philo);
+		take_forks(philo);
+		update_time(philo);
+		print_message("is eating", philo);
 		ft_usleep(philo->time_data.time_to_eat, philo->shared_res.stop_simu);
 		drop_forks(philo);
 		if (*(philo->shared_res.stop_simu) == 1 || \
-            philo->time_data.nb_meal == 0 || philo->time_data.nb_meal == -2)
+			philo->time_data.nb_meal == 0 || \
+			philo->time_data.nb_meal == -2)
 		{
-            if (philo->time_data.nb_meal == 0)
-                letal_loop(philo);
-            break ;
-        }
+			if (philo->time_data.nb_meal == 0)
+				end_of_loop(philo);
+			print_message("is sleeping", philo);
+			break ;
+		}
 		print_message("is sleeping", philo);
 		ft_usleep(philo->time_data.time_to_sleep, philo->shared_res.stop_simu);
 	}
-	return (end_of_loop(philo));
+	return (end_of_simu(philo));
 }

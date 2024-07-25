@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/25 17:40:20 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 23:40:29 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static inline long int  get_time(void)
+static inline long int	get_time(void)
 {
 	struct timeval	tv;
 
@@ -20,47 +20,39 @@ static inline long int  get_time(void)
 	return ((long int)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-static inline void    print_death(t_main_th *main_th, int philo_index)
+static inline void	print_death(t_main_th *main_th, int philo_index)
 {
-    const t_philo   *philo = &main_th->philo_tab[philo_index];
-    int             i;
+	const t_philo	*philo = &main_th->philo_tab[philo_index];
+	int				i;
 
-    i = -1;
-    pthread_mutex_lock(&main_th->print_mutex);
-    printf("%ld %d died\n", get_time() - philo->time_data.start_time, \
-            philo->index);
-    while (++i < philo->nb_philo)
-        main_th->stop_simu[i] = 1;
-    pthread_mutex_unlock(&main_th->print_mutex);
+	i = -1;
+	pthread_mutex_lock(&main_th->print_mutex);
+	printf("%ld %d died\n", get_time() - philo->time_data.start_time, \
+		philo->index);
+	while (++i < philo->nb_philo)
+		main_th->stop_simu[i] = 1;
+	pthread_mutex_unlock(&main_th->print_mutex);
 }
 
-static void main_routine(t_main_th *main_th, int nb_philo)
+static void	main_routine(t_main_th *main_th, int nb_philo)
 {
 	int	i;
 
-	i = -1;
+	i = 0;
 	pthread_mutex_unlock(&main_th->ready_mutex);
 	while (!usleep(10 * nb_philo))
 	{
-		while (++i < nb_philo)
+		while (i < nb_philo)
 		{
-        	if (main_th->stop_simu[i] == 1 && main_th->counter != -2)
-            	return (print_death(main_th, i));
-            if (main_th->counter == -2)
-            {
-                i = -1;
-                while (++i < nb_philo)
-                    main_th->stop_simu[i] = 1;
-                return ;
-            }
+			if (main_th->stop_simu[i] == 1 && main_th->counter != -2)
+				return (print_death(main_th, i));
+			if (main_th->counter == -2)
+				return (change_all_status(main_th, nb_philo));
+			i++;
 		}
-		i = -1;
+		i = 0;
 		if (main_th->counter == -2)
-        {
-            while (++i < nb_philo)
-                main_th->stop_simu[i] = 1;
-			return ;
-        }
+			return (change_all_status(main_th, nb_philo));
 	}
 }
 
@@ -72,7 +64,7 @@ static bool	launcher(t_philo *philo_tab, int tab_size, t_main_th *main_th)
 	while (i < tab_size)
 	{
 		if (pthread_create(&philo_tab[i].philo_id, NULL, routine, \
-            &philo_tab[i]))
+				&philo_tab[i]))
 		{
 			free_all(philo_tab, i + 1, main_th);
 			return (ft_perror("error -> launcher\n"), 1);
