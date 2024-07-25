@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 11:06:29 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/24 19:55:49 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 12:31:56 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,18 @@
 
 static int	main_routine(t_main_th *main_th, int nb_philo)
 {
+	int	i;
+
+	i = -1;
 	pthread_mutex_unlock(&main_th->ready_mutex);
 	while (1)
 	{
-        if (main_th->stop_simu == 1 && main_th->counter != 0)
-            return (0);
+		while (++i < nb_philo)
+		{
+        	if (main_th->stop_simu[i] == 1 && main_th->counter != 0)
+            	return (0);
+		}
+		i = -1;
 		if (!main_th->counter)
 			return (0);
 		usleep(1000);

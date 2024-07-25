@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 15:20:21 by florian           #+#    #+#             */
-/*   Updated: 2024/07/24 20:03:09 by florian          ###   ########.fr       */
+/*   Updated: 2024/07/25 12:41:15 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,12 @@ static inline long int  get_time(void)
 
 	gettimeofday(&tv, NULL);
 	return ((long int)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+int	change_status(t_philo *philo)
+{
+	*(philo->shared_res.stop_simu) = 1;
+	return (1);
 }
 
 int print_death(t_philo *philo)
