@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 15:20:21 by florian           #+#    #+#             */
-/*   Updated: 2024/07/25 23:45:46 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/26 02:10:28 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,21 @@ void	drop_forks(t_philo *philo)
 	return ;
 }
 
-void	ft_usleep(long int time, atomic_int *stop)
+void	ft_usleep(long int time, t_philo *philo)
 {
 	const long int	start = get_time();
 
 	while ((get_time() - start) < time)
 	{
-		if (!*(stop))
+		if (!*(philo->shared_res.stop_simu))
 			usleep(time / 10);
 		else
 			return ;
+		if (get_time() - philo->time_data.last_time >= philo->time_data.time_to_die)
+		{
+			*(philo->shared_res.stop_simu) = 1;
+			return ;
+		}
 	}
 }
 

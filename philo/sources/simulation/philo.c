@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 12:21:00 by fberthou          #+#    #+#             */
-/*   Updated: 2024/07/25 23:59:02 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/26 02:11:53 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	*routine(void *arg)
 		take_forks(philo);
 		update_time(philo);
 		print_message("is eating", philo);
-		ft_usleep(philo->time_data.time_to_eat, philo->shared_res.stop_simu);
+		ft_usleep(philo->time_data.time_to_eat, philo);
 		drop_forks(philo);
 		if (*(philo->shared_res.stop_simu) == 1 || \
 			philo->time_data.nb_meal == 0 || \
@@ -105,7 +105,7 @@ void	*routine(void *arg)
 			break ;
 		}
 		print_message("is sleeping", philo);
-		ft_usleep(philo->time_data.time_to_sleep, philo->shared_res.stop_simu);
+		ft_usleep(philo->time_data.time_to_sleep, philo);
 	}
 	return (end_of_simu(philo));
 }

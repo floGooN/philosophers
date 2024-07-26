@@ -6,7 +6,7 @@
 /*   By: fberthou <fberthou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 14:54:39 by florian           #+#    #+#             */
-/*   Updated: 2024/07/25 23:38:18 by fberthou         ###   ########.fr       */
+/*   Updated: 2024/07/26 02:11:10 by fberthou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	*routine(void *arg);
 //  ==== simulation/action.c ====  //
 void	update_time(t_philo *philo);
 void	drop_forks(t_philo *philo);
-void	ft_usleep(long int time, atomic_int *stop);
+void	ft_usleep(long int time, t_philo *philo);
 void	end_of_loop(t_philo *philo);
 
 //  ==== simulation/simu_utils.c ====  //
